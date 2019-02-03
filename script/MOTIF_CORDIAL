@@ -1,0 +1,3 @@
+NC[^ ]+#ADJ[^ ]+
+NC[^ ]+#PREP#NC[^ ]+
+NC[^ ]+#PREP#DET[^ ]+#NC[^ ]+

@@ -1,0 +1,3 @@
+NOM#ADJ
+NOM#PRP[^ ]*#NOM
+NOM#PRP[^ ]*#DET[^ ]*#NOM
