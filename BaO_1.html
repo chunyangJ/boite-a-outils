@@ -1,0 +1,440 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+	Design by TEMPLATED
+	http://templated.co
+	Released for free under the Creative Commons Attribution License
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Boîte à Outils : série 1</title>
+        <meta name="keywords" content="Toolbox Perl" />
+        <meta name="description" content="Projet Encadré : Boîte à Outils" />
+        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+        <link href="css/default.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/fonts.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/prism.css" rel="stylesheet" type="text/css" media="all"/>
+        <!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+    </head>
+    <body>
+        <div id="header-wrapper">
+            <div id="header" class="container">
+                <div id="logo">
+                    <span class="icon icon-inbox"></span>
+                    <h1><a href="http://www.tal.univ-paris3.fr/cours/masterproj.htm#projet2" target="_blank">Boîte à Outils : série 1</a></h1>
+                    <span style="transformation: uppercase;">"There's more than one way to do it"</span><br /><br />
+                    <span><a href="http://www.tal.univ-paris3.fr/plurital/" target="_blank">pluriTAL</a>&#160;&#160;M1</span>
+                </div>
+                <div id="triangle-up"></div>
+            </div>
+        </div>    
+        <div id="menu-wrapper">
+            <div id="menu">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li class="current_page_item"><a href="BaO_1.html">BaO 1</a></li>
+                    <li><a href="BaO_2.html">BaO 2</a></li>
+                    <li><a href="BaO_3.html">BàO 3</a></li>
+                    <li><a href="BaO_4.html">BaO 4</a></li>
+                    <li><a href="analyse.html">Analyse</a></li>
+                    <li><a href="a_propos.html">A Propos</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- main content -->
+        <div id="wrapper">
+            <div id="featured-wrapper">
+                <div class="content">
+                    <h1>BàO 1 : Parcours+Extraction</h1>
+                    <div class="content-box">
+                        <h2>I. Spécification</h2>
+                        <h3>Boîte à Outils série 1</h3>
+                        <ol>
+                            <li>Parcours du Fils RSS du Monde 2017</li>
+                            <li>Extraction des contenus textuels</li>
+                        </ol>
+                    </div>
+                    <div class="content-box">
+                        <h3>Données</h3>
+                        <ul>
+                            <li><Strong>Entrée</strong> : Fils RSS du Monde 2017 (fichiers XML)</li>
+                            <li><Strong>Sortie</strong> : Tous les  titres et descriptions d'une rubrique stockés dans un fichier txt et un fichier XML</li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <h2>II. Méthodes et Outils</h2>
+                        <h3>2.1 Méthodes de Parcours de l'arborescence</h3>
+                        
+                        <h4>2.1.1 Parcours récursif</h4>
+                        <p>Parcours récursif d'arborescence de répertoire a beaucoup de mérites : l'algorithme est facile à comprendre, le code est lisible, et la performance est assez satisfaisante.</p>
+                        <div class="code">
+                            <pre>
+                                <code class="language-Perl">
+sub parcourirRecursion
+{
+    my ($path)=@_;
+    opendir(my $dir, $path) or die "ERR : Echec d'ouverture de $path: $!\n";
+    my @files=readdir($dir);
+    closedir($dir);
+    
+    foreach my $file (@files)
+    {
+        next if $file =~ /^\.\.?$/;
+        $file=$path."/".$file;
+        if ( -d $file ) { parcourirRecursion($file); }
+        if ( -f $file and $file=~ m/-$rubrique.+\.xml$/ )
+        {
+            $fileid++;
+# trois moyens d'extraction
+#             extraireXPath($file);
+            extraireRSS($file);
+#             extraireRegex($file);
+        }
+    }
+}
+</code>
+                            </pre>
+                        </div>
+                        
+                        <h4>2.1.2 Parcours non-récursif (pile)</h4>
+                        <p>Néanmoins, comme le programme parcourt l'arborsecence en profondeur et utilise pile pour stocker les variables, quand on essaye de parcourir une arborsecence à grande profondeur avec une mémoire insuffisante, on risque d'épuiser la mémoire. Ainsi, on rencontra le fameux <em style="color: darkblue;">stack overflow</em> (on aime le site, mais pas l'erreur). Le programme s'arrêterait avant de finir le parcours.</p>
+                        <blockquote>There's more than one way to do it.</blockquote>
+                        <p>Bien que nous n'avions pas ce problème dans ce projet, nous proposons une autre solution pour parcourir l'arborescence de répertoire. Il s'agit d'une façon non-récursive, qui simule une pile en utilisant la structure "tableau" dispensée par Perl.</p>
+                        <div class="code">
+                            <pre>
+                                <code class="language-Perl">
+sub parcourirPile
+{
+    my ($path)=@_;
+    my @dirs=($path.'/');
+    
+    while(my $dir=pop(@dirs))
+    {
+        my $DH;
+        unless(opendir($DH, $dir))
+        {
+            warn "ERR : échec d'ouverture de $dir: $!\n";
+            next;
+        }
+        foreach my $file (readdir($DH))
+        {
+            next if $file =~ /^\.\.?$/;
+            $file=$dir."/".$file;
+            if ( -d $file ) { push(@dirs, $file); }
+            if ( -f $file and $file=~ m/-$rubrique.+\.xml$/ )
+            {
+                $fileid++;
+# trois moyens d'extraction
+#             extraireXPath($file);
+                extraireRSS($file);
+#             extraireRegex($file);
+            }
+        }
+        closedir($DH);
+    }
+}
+</code>
+                            </pre>
+                        </div>
+                        
+                        <h3>2.2 Outils d'extraction des données textuelles</h3>
+                        <p>Dans le projet, nous proposons 3 solutions pour extraire des contenus textuels, qui utilisent respectivement le module XML::RSS, le module XML::XPath et les expressions régulières.</p>
+                        <h4>2.2.1 Module  XML::RSS du Perl</h4>
+                        <p><strong>Description :</strong> Ce module facilite la création, la mise à jour et l'enregistrement des fichiers RSS.<br />
+                        <strong>url :</strong> <a href="http://search.cpan.org/dist/XML-RSS/lib/XML/RSS.pm" target="_blank">http://search.cpan.org/dist/XML-RSS/lib/XML/RSS.pm</a><br />
+                        Version 1.60</p>
+                        <h4>2.2.2 Module XML::XPath du Perl</h4>
+                        <p><strong>Description :</strong> Il constitue un ensemble de modules pour analyser et évaluer les instructions XPath. Il a pour but de se conformer exactement à la spécification XPath à l'adresse <a href="http://www.w3.org/TR/xpath" target="_blank">http://www.w3.org/TR/xpath</a> tout en permettant d'ajouter des extensions sous la forme de fonctions.<br />
+                        <strong>url : </strong><a href="http://search.cpan.org/~msergeant/XML-XPath-1.13/XPath.pm" target="_blank">http://search.cpan.org/~msergeant/XML-XPath-1.13/XPath.pm</a><br />
+                        Version 1.1.3<br />
+                        <h4>2.2.3 Pure Perl : Regex</h4>
+                        <p><a href="https://perldoc.perl.org/perlre.html#Regular-Expressions" target="_blank">Les expressions régulières du Perl.</a></p>
+                        
+                    </div>
+                    <div class="content-box">
+                        <h2>III. Solution</h2>
+                        <div class="code solution">
+                            <pre>
+                                <code class="language-Perl">#!/usr/bin/perl
+use strict;
+use warnings;
+use XML::RSS;
+use XML::XPath;
+use open IO =&gt; ':encoding(UTF-8)';
+
+my $MODIF="2018-05-15";
+my $DOC=&lt;&lt;DOCUMENTATION;
+    ____________________________________________________________________________
+
+    NOM :   Boîte à Outils 1      
+    MODIFICATION :
+            $MODIF
+    AUTEURS :  
+            XU Yizhou, JIANG Chunyang
+    USAGE : 
+            perl Bao_1.pl REPERTOIRE-A-PARCOURIR RUBRIQUE-A-EXTRAIRE
+    DESCRIPTION:
+            Le programme prend en entrée le nom du répertoire contenant les 
+            fichiers à traiter
+            Le programme construit en sortie un fichier de texte bruit,
+            et un fichier structuré contenant
+            sur chaque ligne le nom du fichier et le résultat du filtrage :
+            &lt;fichier \@id \@nom&gt;&lt;item \@numero&gt;&lt;titre&gt;titre&lt;/titre&gt;
+            &lt;description&gt;description&lt;/description&gt;&lt;/item&gt;&lt;/fichier&gt; 
+    ____________________________________________________________________________
+
+DOCUMENTATION
+
+if (@ARGV!=2) {
+    die $DOC;
+}
+
+my $repertoire=$ARGV[0];
+my $rubrique=$ARGV[1];
+my %redondance;
+my $cmptItem=0;
+my $fileid=0;
+
+#-----------------------------------
+#normaliser le nom du répertoire
+#-----------------------------------
+$repertoire=~ s/[\/]$//;
+
+open(my $FHTXT,"&gt;","$rubrique-raw.txt");
+open(my $FHXML,"&gt;","$rubrique-raw.xml");
+print $FHXML "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n";
+print $FHXML "&lt;base rubrique=\"$rubrique\" type=\"texte\"&gt;\n&lt;entete&gt;\n&lt;auteur&gt;JIANG Chunyang&lt;/auteur&gt;\n&lt;auteur&gt;XU Yizhou&lt;/auteur&gt;\n&lt;/entete&gt;\n&lt;fichiers&gt;\n";
+#------------------------------------------------------------------
+parcourirRecursion($repertoire);
+# parcourirPile($repertoire);
+#------------------------------------------------------------------
+print $FHXML "&lt;/fichiers&gt;\n&lt;/base&gt;\n";
+close($FHTXT);
+close($FHXML);
+exit 0;
+#------------------------------------------------------------------
+
+
+#------------------------------------------------------------------
+sub parcourirRecursion
+{
+    my ($path)=@_;
+    opendir(my $dir, $path) or die "ERR : Echec d'ouverture de $path: $!\n";
+    my @files=readdir($dir);
+    closedir($dir);
+    
+    foreach my $file (@files)
+    {
+        next if $file =~ /^\.\.?$/;
+	$file=$path."/".$file;
+	if ( -d $file ) { parcourirRecursion($file); }
+        if ( -f $file and $file=~ m/-$rubrique.+\.xml$/ )
+        {
+            $fileid++;
+# trois moyens d'extraction
+#             extraireXPath($file);
+            extraireRSS($file);
+#             extraireRegex($file);
+        }
+    }
+}
+
+#------------------------------------------------------------------
+sub parcourirPile
+{
+    my ($path)=@_;
+    my @dirs=($path.'/');
+    
+    while(my $dir=pop(@dirs))
+    {
+        my $DH;
+        unless(opendir($DH, $dir))
+        {
+            warn "ERR : échec d'ouverture de $dir: $!\n";
+            next;
+        }
+        foreach my $file (readdir($DH))
+        {
+            next if $file =~ /^\.\.?$/;
+            $file=$dir."/".$file;
+            if ( -d $file ) { push(@dirs, $file); }
+            if ( -f $file and $file=~ m/-$rubrique.+\.xml$/ )
+            {
+                $fileid++;
+# trois moyens d'extraction
+#             extraireXPath($file);
+                extraireRSS($file);
+#             extraireRegex($file);
+            }
+        }
+        closedir($DH);
+    }
+}
+
+sub extraireRSS
+{
+    my ($file)=@_;
+    my $rss=new XML::RSS( encoding =&gt; 'utf-8' );
+    eval { $rss-&gt;parsefile($file); };
+    if ($@) {
+        warn "ERR: échec d'analyse du fichier $file : $@\n";
+    }
+    else
+    {
+        print $FHXML "&lt;fichier id=\"$fileid\" nom=\"$file\"&gt;\n";
+        foreach my $item (@{$rss-&gt;{'items'}})
+        {
+            my $titre=$item-&gt;{'title'};
+            my $description=$item-&gt;{'description'};
+            #---------------------------------
+            # éliminer des doublons
+            #---------------------------------
+            if(not exists $redondance{$titre})
+            {
+                $cmptItem++;
+                $redondance{$titre}=1;
+                nettoyer(\$titre);
+                if( $description )
+                {
+                    nettoyer(\$description);
+                }else{
+		    $description="";
+                }
+                if( not $titre=~ m/[?!.]$/ ){ $titre.='.'; }
+                print $FHTXT "$titre\n";
+                print $FHTXT "$description\n\n";
+                print $FHXML "&lt;item numero=\"$cmptItem\"&gt;\n&lt;titre&gt;$titre&lt;/titre&gt;\n&lt;description&gt;$description&lt;/description&gt;\n&lt;/item&gt;\n";
+            }            
+        }
+        print $FHXML "&lt;/fichier&gt;\n";
+    }
+}
+
+sub extraireXPath
+{
+    my ($file)=@_;
+    print $FHXML "&lt;fichier id=\"$fileid\" nom=\"$file\"&gt;\n";
+    
+    my $xp=XML::XPath-&gt;new( filename =&gt; $file );
+    foreach my $node ($xp-&gt;find('/rss/channel/item')-&gt;get_nodelist)
+    {
+        my $titre=$node-&gt;find('title')-&gt;string_value;
+        my $description=$node-&gt;find('description')-&gt;string_value;
+        if(not exists $redondance{$titre})
+        {
+            $cmptItem++;
+            $redondance{$titre}=1;
+            nettoyer(\$titre);
+            nettoyer(\$description);
+            if( not $titre=~ m/[?!.]$/ ){ $titre.='.'; }
+            print $FHTXT "$titre\n";
+            print $FHTXT "$description\n\n";
+            print $FHXML "&lt;item numero=\"$cmptItem\"&gt;\n&lt;titre&gt;$titre&lt;/titre&gt;\n&lt;description&gt;$description&lt;/description&gt;\n&lt;/item&gt;\n";
+        }            
+    }
+    print $FHXML "&lt;/fichier&gt;\n";
+}
+
+sub extraireRegex 
+{
+    my ($file)=@_;
+    print $FHXML "&lt;fichier id=\"$fileid\" nom=\"$file\"&gt;\n";
+    
+    open (my $FH, "&lt;", $file);
+    my $texte="";
+    while (my $ligne=&lt;$FH&gt;)
+    {
+        chomp $ligne;
+        $ligne=~ s/\r//g;
+        $texte.=$ligne;
+    }
+    close($FH);
+    $texte=~ s/&gt;\s+&lt;/&gt;&lt;/g;
+    while ($texte=~ m/&lt;item&gt;.+?&lt;title&gt;([^&lt;]*)&lt;\/title&gt;[^&lt;]*&lt;description&gt;([^&lt;]*)&lt;\/description&gt;.+?&lt;\/item&gt;/g)
+    {
+        my $titre=$1;
+        my $description=$2;
+        if(not exists $redondance{$titre})
+        {
+            $cmptItem++;
+            $redondance{$titre}=1;
+            nettoyer(\$titre);
+            nettoyer(\$description);
+            if( not $titre=~ m/[?!.]$/ ){ $titre.='.'; }
+            print $FHTXT "$titre\n";
+            print $FHTXT "$description\n\n";
+            print $FHXML "&lt;item numero=\"$cmptItem\"&gt;\n&lt;titre&gt;$titre&lt;/titre&gt;\n&lt;description&gt;$description&lt;/description&gt;\n&lt;/item&gt;\n";
+        }
+    }
+    print $FHXML "&lt;/fichier&gt;\n";
+}
+
+sub nettoyer
+{
+    my $contenu=$_[0];
+    $$contenu =~ s/&lt;[^&gt;]+&gt;//g;
+    $$contenu =~ s/&lt;.+&gt;//g;
+    $$contenu =~ s/&(#38;)?#39;/'/g;
+    $$contenu =~ s/&(#38;)?#34;/"/g;
+    $$contenu =~ s/&(amp;)?/et/g;
+    $$contenu =~ s/\x{2019}/\'/g;
+}</code>
+                            </pre>
+                            <a class="button small" href="script/BaO_1_beta.pl" download="">telecharger</a>
+                        </div>
+                    </div>
+                    <div class="content-box">
+                        <h2>IV. Résultats</h2>
+                        <h3>4.1 TXT</h3>
+                        <h4>Exemple</h4>
+                        <a class="button special" href="resultat/BaO1_sortie/TXT/823353-raw.txt" target="_blank">823353</a>
+                        <a class="button special" href="resultat/BaO1_sortie/TXT/3208-raw.txt" target="_blank">3208</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3208-raw.txt" download="">3208</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3210-raw.txt" download="">3210</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3214-raw.txt" download="">3214</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3224-raw.txt" download="">3224</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3232-raw.txt" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3236-raw.txt" download="">3236</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3242-raw.txt" download="">3242</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3244-raw.txt" download="">3244</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3246-raw.txt" download="">3246</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3260-raw.txt" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3476-raw.txt" download="">3476</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/3546-raw.txt" download="">3546</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/651865-raw.txt" download="">651865</a>
+                        <a class="button" href="resultat/BaO1_sortie/TXT/823353-raw.txt" download="">823353</a><br />
+                        <a class="button" href="resultat/BaO1_sortie/TXT/TXT.zip" download="" style="width: 33em;">TOUT</a>
+                        <h3>4.2 XML</h3>
+                        <h4>Exemple</h4>
+                        <a class="button special" href="resultat/BaO1_sortie/XML/823353-raw.xml" target="_blank">823353</a>
+                        <a class="button special" href="resultat/BaO1_sortie/XML/3208-raw.xml" target="_blank">3208</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3208-raw.xml" download="">3208</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3210-raw.xml" download="">3210</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3214-raw.xml" download="">3214</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3224-raw.xml" download="">3224</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3232-raw.xml" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO1_sortie/XML/3236-raw.xml" download="">3236</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3242-raw.xml" download="">3242</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3244-raw.xml" download="">3244</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3246-raw.xml" download="">3246</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3260-raw.xml" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO1_sortie/XML/3476-raw.xml" download="">3476</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/3546-raw.xml" download="">3546</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/651865-raw.xml" download="">651865</a>
+                        <a class="button" href="resultat/BaO1_sortie/XML/823353-raw.xml" download="">823353</a><br />
+                        <a class="button" href="resultat/BaO1_sortie/XML/XML.zip" download="" style="width: 33em;">TOUT</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="stamp" class="container">
+            <div class="hexagon"><span class="icon icon-wrench"></span></div>
+        </div>
+        <div id="copyright" class="container">
+            <p>&copy;  JIANG Chunyang &amp; XU Yizhou. All rights reserved. | Design by <a href="http://templated.co" rel="nofollow">TEMPLATED</a>.</p>
+        </div>
+        <script src="js/prism.js"></script>
+    </body>
+</html>

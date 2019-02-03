@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+	Design by TEMPLATED
+	http://templated.co
+	Released for free under the Creative Commons Attribution License
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Analyse</title>
+        <meta name="keywords" content="Toolbox Perl" />
+        <meta name="description" content="Projet Encadré : Boîte à Outils" />
+        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+        <link href="css/default.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/fonts.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/prism.css" rel="stylesheet" type="text/css" media="all"/>
+        <!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+    </head>
+    <body>
+        <div id="header-wrapper">
+            <div id="header" class="container">
+                <div id="logo">
+                    <span class="icon icon-inbox"></span>
+                    <h1><a href="http://www.tal.univ-paris3.fr/cours/masterproj.htm#projet2" target="_blank">Analyse</a></h1>
+                    <span style="transformation: uppercase;">"There's more than one way to do it"</span><br /><br />
+                    <span><a href="http://www.tal.univ-paris3.fr/plurital/" target="_blank">pluriTAL</a>&#160;&#160;M1</span>
+                </div>
+                <div id="triangle-up"></div>
+            </div>
+        </div>    
+        <div id="menu-wrapper">
+            <div id="menu">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="BaO_1.html">BaO 1</a></li>
+                    <li><a href="BaO_2.html">BaO 2</a></li>
+                    <li><a href="BaO_3.html">BàO 3</a></li>
+                    <li><a href="BaO_4.html">BaO 4</a></li>
+                    <li class="current_page_item"><a href="analyse.html">Analyse</a></li>
+                    <li><a href="a_propos.html">A Propos</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- main content -->
+        <div id="wrapper">
+            <div id="featured-wrapper">
+                <div class="content">
+                    <h1>Analyse</h1>
+                    <div class="content-box">
+                        <p>L'enchaînement de nos quatre Boîtes à Outils nous permet un répérage automatique des patrons morphosyntaxiques et une représentation graphique des cooccurrences. Dans le cadre du projet, nous nous appuyons sur l'étiquetage morphosyntaxique et l'extraction des patrons morphosyntaxiques. Comme les résultats se distinguent de telle ou telle manière, nous avons envie de savoir s'ils sont pertinents et représentatifs. Nous aimerons également diagnostiquer cette divergence, ainsi que proposer quelques pistes d'amélioration possibles. </p>
+                    </div>
+                    <div class="content-box">
+                        <h2>I. APERCU</h2>
+                        <p>Dans un premier temps, il convient d'avoir un aperçu de nos données.</p>
+                        <h4>Distribution de nombre de tokens par rubrique</h4>
+                        <p class="img"><img src="images/image001.png" alt="distribution par rubrique" /></p>
+                        <p>
+                            <strong>Données :</strong> les sorties de BàO 2 par rubrique, en fonction des outils utilisés.<br />
+                            <details><summary><strong>Légende</strong></summary>
+                            <ul style="font-size: inherit;">
+                                <li><strong style="color: steelblue;">nb_tokens(Cordial) :</strong> nombre de tokens d'une rubrique étiquetée par Cordial ;</li>
+                                <li><strong style="color: darkred;">nb_tokens(TG) :</strong> nombre de tokens d'une rubrique étiquetée par Treetagger (avec le fichier de paramètre :french-utf8.par) ;</li>
+                                <li><strong style="color: forestgreen;">nb_tokens(TG oral.par) :</strong> nombre de tokens d'une rubrique étiquetée par Treetagger (avec le fichier de paramètre :french-oral-utf-8.par) ;</li>
+                            </ul></details>
+                        </p>
+                        <p>A première vue, les rubriques <i>à la Une(3208)</i>, <i>International(3210)</i>, <i>Europe(3214)</i>, <i>Société(3224)</i>, <i>Idées(3232)</i>, <i>Culture(3246)</i> et <i>Politique(823353)</i> sont très significatives en terme de taille. La variation des outils, quant à elle, montre grosso modo que les tokens via <i>Cordial</i> sont légèrement plus nombreux que ceux produits par <i>Treetagger</i>.</p>
+                        <p>Du point de vue journalistique, ces rubriques mentionnées <i>supra</i> constituent toujours  une partie importante des contenus d'un journal (sauf des journaux spécialisés, bien sûr). Il serait intéressant de nous appuyer sur ces rubriques représentatives pour l'analyse lingistique.</p>
+                        <p>Du point de vue de TAL, il faudrait comparer ces deux outils d'étiquetage morphosyntaxique en analysant leurs produits à fin d'améliorer les boîtes à outils.</p>
+                        <p><strong style="color: brown;">NOTE :</strong> Définissons quelques <em style="color: blue;">@PARAM</em> locaux pour l'analyse <i>infra</i>.<br />
+                            <ul style="font-size: inherit;">
+                                <li><b>T1</b> =  Treetagger avec le fichier de paramètre :french-utf8.par ;</li>
+                                <li><b>T2</b> =  Treetagger avec le fichier de paramètre :french-oral-utf-8.par ;</li>
+                                <li><b>NA</b> = Nom Adj ;</li>
+                                <li><b>NPN</b> = Nom Prp Nom ;</li>
+                                <li><b>NPDN</b> = Nom Prp Det Nom ;</li>
+                            </ul>
+                        </p>
+                        <h4>Distribution de nombre de patrons morphosyntaxiques (NA) par rubrique</h4>
+                        <p class="img"><img src="images/image003.png" alt="NOM ADJ" /></p>
+                        <p>
+                            <strong>Données :</strong> les sorties de BàO 3 par rubrique, en fonction des outils utilisés.<br />
+                            <details><summary><strong>Légende</strong></summary>
+                            <ul style="font-size: inherit;">
+                                <li><strong style="color: steelblue;">NA(Cordial) :</strong> nombre de patrons morphosyntaxiques (NA) extrait d'une rubrique (Script Perl, sorite de Cordial) ;</li>
+                                <li><strong style="color: darkred;">NA(Treetagger) :</strong> nombre de patrons morphosyntaxiques (NA) extrait d'une rubrique (Script Perl/XSLT/XQuery, sortie via T1) ;<br />
+                                <strong style="color: red;">NOTE : </strong>les trois moyens (perl/XSLT/XQuery) ont le même résultat.
+                                </li>
+                                <li><strong style="color: forestgreen;">NA(Treetagger oral.par) :</strong> nombre de patrons morphosyntaxiques (NA) extrait d'une rubrique (Script Perl, sortie via T2) ;</li>
+                            </ul></details>
+                        </p>
+
+                        <h4>Distribution de nombre de patrons morphosyntaxiques (NPN) par rubrique</h4>
+                        <p class="img"><img src="images/image005.png" alt="NOM PREP NOM" /></p>
+                        <p>
+                            <strong>Données :</strong> les sorties de BàO 3 par rubrique, en fonction des outils utilisés.<br />
+                            <details><summary><strong>Légende</strong></summary>
+                            <ul style="font-size: inherit;">
+                                <li><strong style="color: steelblue;">NPN(Cordial) :</strong> nombre de patrons morphosyntaxiques (NPN) extrait d'une rubrique (Script Perl, sorite de Cordial) ;</li>
+                                <li><strong style="color: darkred;">NPN(Treetagger) :</strong> nombre de patrons morphosyntaxiques (NPN) extrait d'une rubrique (Script Perl/XSLT/XQuery, sortie via T1) ;</li>
+                                <li><strong style="color: forestgreen;">NPN(Treetagger oral.par) :</strong> nombre de patrons morphosyntaxiques (NPN) extrait d'une rubrique (Script Perl, sortie via T2) ;</li>
+                            </ul></details>
+                        </p>
+                        
+                        <h4>Distribution de nombre de patrons morphosyntaxiques (NPDN) par rubrique</h4>
+                        <p class="img"><img src="images/image007.png" alt="NOM PREP DET NOM" /></p>
+                        <p>
+                            <strong>Données :</strong> les sorties de BàO 3 par rubrique, en fonction des outils utilisés.<br />
+                            <details><summary><strong>Légende</strong></summary>
+                            <ul style="font-size: inherit;">
+                                <li><strong style="color: steelblue;">NPDN(Cordial) :</strong> nombre de patrons morphosyntaxiques (NPDN) extrait d'une rubrique (Script Perl, sorite de Cordial) ;</li>
+                                <li><strong style="color: darkred;">NPDN(Treetagger) :</strong> nombre de patrons morphosyntaxiques (NPDN) extrait d'une rubrique (Script Perl/XSLT/XQuery, sortie via T1) ;</li>
+                                <li><strong style="color: forestgreen;">NPDN(Treetagger oral.par) :</strong> nombre de patrons morphosyntaxiques (NPDN) extrait d'une rubrique (Script Perl, sortie via T2) ;</li>
+                            </ul></details>
+                        </p>
+                        <h4 style="color: brown;">Remarques :</strong></h4>
+                        <p>
+                            <b style="color: darkred;">[Remarque 1]</b> Cordial a étiquté beaucoup plus de patrons NA que T1 et T2.<br />
+                            En général : NombreTrouvé(Cordial > T1 > T2).<br />
+                            Soit, R1<i style="font-size: smaller;">i</i> = (nb_C<i style="font-size: smaller;">i</i> – nb_T1<i style="font-size: smaller;">i</i>)/nb_C<i style="font-size: smaller;">i</i>, R2<i style="font-size: smaller;">i</i> = (nb_C<i style="font-size: smaller;">i</i> – nb_T2<i style="font-size: smaller;">i</i>)/nb_C<i style="font-size: smaller;">i</i> :<br />
+                            Sur 14 rubriques, <br />
+                            <strong style="font-weight: 600;">Moyenne(R1)</strong> = 8,42 %; <br /> 
+                            <strong style="font-weight: 600;">Moyenne(R2)</strong> = 12,1 %; <br />
+                            <strong style="font-weight: 600;">MoyenneHarmonique(R1)</strong> = 7,41 %;<br />
+                            <strong style="font-weight: 600;">MoyenneHarmonique(R2)</strong> = 11,11 %; <br />
+                            <strong style="font-weight: 600;">Max(R1)</strong> = 11,47 % (Planète);<br />
+                            <strong style="font-weight: 600;">Max(R2)</strong> = 15,14 % (Europe);<br />
+                            <strong style="font-weight: 600;">Min(R1)</strong> = 4,92 % (Idées);<br />
+                            <strong style="font-weight: 600;">Min(R2)</strong> = 8,43% (Idées).
+                        </p>
+
+                        <p>
+                            <b style="color: darkred;">[Remarque 2]</b> Pour des patrons de type NPN, il s'agit d'un autre scénario totalement au contraire, c'est-à-dire que les patrons extraits des rubriques étiquetées via Cordial sont moins nombreux que ceux extraits des résutats de T1 et T2.<br />
+                            En général: NombreTrouvé(Cordial &lt; T1 &lt; T2).<br />
+                            Soit, R1<i style="font-size: smaller;">i</i> = (nb_T1<i style="font-size: smaller;">i</i> – nb_C<i style="font-size: smaller;">i</i>)/nb_C<i style="font-size: smaller;">i</i>, R2<i style="font-size: smaller;">i</i> = (nb_T2<i style="font-size: smaller;">i</i> – nb_C<i style="font-size: smaller;">i</i>)/nb_C<i style="font-size: smaller;">i</i> :<br />
+                            Sur 14 rubriques, <br />
+                            <strong style="font-weight: 600;">Moyenne(R1)</strong> = 78,23 %; <br /> 
+                            <strong style="font-weight: 600;">Moyenne(R2)</strong> = 117,46 %; <br />
+                            <strong style="font-weight: 600;">MoyenneHarmonique(R1)</strong> = 54,98 %;<br />
+                            <strong style="font-weight: 600;">MoyenneHarmonique(R2)</strong> = 103,91 %; <br />
+                            <strong style="font-weight: 600;">Max(R1)</strong> = 103,59 % (Idées);<br />
+                            <strong style="font-weight: 600;">Max(R2)</strong> = 140,78 % (Idées);<br />
+                            <strong style="font-weight: 600;">Min(R1)</strong> = 12,50 % (Culture);<br />
+                            <strong style="font-weight: 600;">Min(R2)</strong> = 40,12 % (A la Une).
+                        </p>
+                        
+                        <p>
+                            <b style="color: darkred;">[Remarque 3]</b> Pour des patrons de type NPDN, la situation est encore plus complexe :<br />
+                            En général : NombreTrouvé(T1 &lt; Cordial &lt; T2).<br />
+                            On adapte les formules pour calculer sur des nombres positifs.<br />
+                            Soit, R1<i style="font-size: smaller;">i</i> = abs(nb_T1<i style="font-size: smaller;">i</i> –nb_C<i style="font-size: smaller;">i</i>)/nb_C<i style="font-size: smaller;">i</i>, R2<i style="font-size: smaller;">i</i> = abs(nb_T2<i style="font-size: smaller;">i</i> –nb_C<i style="font-size: smaller;">i</i>)/nb_C<i style="font-size: smaller;">i</i> :
+                            <br />
+                            Sur 14 rubriques, <br />
+                            <strong style="font-weight: 600;">Moyenne(R1)</strong> = 10,56 %; <br /> 
+                            <strong style="font-weight: 600;">Moyenne(R2)</strong> = 16,63 %; <br />
+                            <strong style="font-weight: 600;">MoyenneHarmonique(R1)</strong> =  9,44 %;<br />
+                            <strong style="font-weight: 600;">MoyenneHarmonique(R2)</strong> = 11.10 %; <br />
+                            <strong style="font-weight: 600;">Max(R1)</strong> = 14,88 % (Média);<br />
+                            <strong style="font-weight: 600;">Max(R2)</strong> = 64,70 % (A la Une);<br />
+                            <strong style="font-weight: 600;">Min(R1)</strong> = 6,91 % (International);<br />
+                            <strong style="font-weight: 600;">Min(R2)</strong> = 4,85 % (Politique).
+                        </p>                        
+                        <p><strong style="color: brown;">NOTE :</strong> Pour Max() et Min(), on élimine les rubriques Voyage et Technologies (taille trop petite dans l’ensemble).</p>
+                        <p><strong style="color: purple;">ATTENTION :</strong> les chiffres <i>supra</i> (grand ou petit) ne veulent rien dire pour évaluer ces outils car nous ne disposons pas de gold standard. Néanmoins, Ils nous montre, à un certain degré, la divergence, nous permettant d’entrer dans des rubriques spécifiques pour une analyse plus fine. </p>
+                        
+                    </div>
+                    <div class="content-box">
+                        <h2>II. PERSPECTIVE LINGUISTIQUE</h2>
+                        <p>Dans notre travail, les groupes nominaux nous intéressent : Nous avons extrait spécifiquement les patrons de type NOM ADJ, NOM PREP NOM, NOM PREP DET NOM. L’observation des fréquences des patrons morphosyntaxiques permet de mener une analyse linguistique tenant compte des structures préférentielles de la figure, distinguant structure prototypique et structure exceptionnelle(Leroy, 2002).</p>
+                        <p class="img"><img src="images/analyse-ling-ColEmplie.png" alt="analyse ling" /></p>
+                        <p>Dans cette section, notre étude exclut tout d’abord les rubriques Voyage et Technologie à cause de leur taille petite par rapport à celle des autres.</p>
+                        <p>Ce diagramme à colonnes empilés montre le pourcentage de nombre de patrons par rapport au nombre de tokens dans la rubrique. Nous remarquons tout de suite que les rubriques Sports, Culture et Livres sont caractérisées par leur basse pourcentage des patrons. Par contre, les rubriques Planète et Cinéma se distinguent par ce chiffre significatif.  A propos des autres rubriques, elles ont tendance à s’assimiler.</p>
+                        <p>A titre d’exemple,nous pouvons faire une exploration lexicométrique dans notre sous-corpus composé des rubriques Planète(3244) et  A la Une (3208).</p>
+                        <p>Selon les graphes générées dans la BàO4, dans la rubrique Planète, il existe des patrons qui appartiennent à autres champs sémantiques et ont une fréquence significative dans les listes, tels que « président américain », « Union européenne », <i>etc</i>. Nous avons donc examiné les cooccurrences de ces deux patrons dans la rubrique Planète, et examiné aussi le motif « climat » dans la Rubrique A la Une pour observer comment ces champs sont liés.</p>
+                        <p><strong>Climat à la Une</strong><br />
+                        La plupart des cooccurents portent une signification négative : « désordres », « risque », « délétère », « menace » <i>etc</i>. 
+                        </p>
+                        <p><strong>Américain/Européen sur la Planète</strong><br />
+                        La graphe est beaucoup plus compliquée.<br />
+                        Les cooccurrents autour de « européen » et « américain » se distinguent. Pour le premier, il s'agit d'organisation, d'accord, tels que « Union », « Commission », «  Autorité », « concensus ». Quant à « américain », les cooccurrents varient : « revue », « sciences», « président »,  « télévision », « retrait », <i>etc</i>.<br />
+                        Selon nos graphes dans BàO4, il est intéressant de voir que pour un même motif, ses « compagnies » varient en fonction de rubriques. Cela bien vérifie qu'un mot en soi ne signifie rien en dehors de son utilisation.
+                        </p>
+                    </div>
+                    <div class="content-box">
+                        <h2>III. PERSPECTIVE TAL</h2>
+                        <p>La performance de BàO3 est un bon indicateur de la performance de BàO2, c’est-à-dire que la sorite de BàO2  a une grand influence sur le résultat de BàO3. Il serait donc logique de commencer par une comparaison de différentes outils (et leur paramètres éventuels) d’étiquetage pour proposer des pistes d’amélioration.</p>
+                        <p>Selon les statistiques <i>supra</i>, nous faisons l'hypothèse qu'il existe une grande divergence de l'étiquetage via Cordial et Treetagger ; pour Treetagger lui même, un changement de fichier de paramètres influence beaucoup le résultat. </p>
+                        <p><b style="color: darkred;">[Remarque 1]</b> Dans la BàO3, les index construits par Cordial produisent moins de NPN et NPDN que ceux générés par Treetagger.</p>
+                        <p>D'où vient cette divergence ? Nous nous permettons d’effectuer une petite recherche documentaire. 
+Selon le manuel de Cordial, il y a une option facultative de découper les expression en unités élémentaires. c'est-à-dire que soit on ne clique pas cette option, auquel cas, Cordial groupe les expressions qu'il estime devoir être groupées (<em>chemin de fer</em>, <em>pomme de terre</em>, <em>l'un et l'autre</em>...), soit on clique cette option, auquel cas les expressions ne sont pas groupées et chacun des mots les composant fait l'objet d'une analyse morphologique et grammaticale spécifique. Dans notre projet, il a été conseillé de la décroché. A notre avis, cette option est l'un des facteurs les plus significatifs qui augmentent la différence des résultats de ces deux outils.</p>
+                        <p>Quant à Treetagger, il tokenize le texte en unités élémentaires. En l’occurrance, les expressions mentionnées <i>supra</i> sont inévitablement séparés et étiquetés. Cela explique pourquoi les sorties via Cordial construisent moins de patrons de type NPN/NPDN, car ils sont étiqueté autrement et ne font plus partie de ce type.</p>
+                        <p><strong>Piste d'amélioration possible :</strong> Dans l'étiquetage, on essaie de paramétrer Cordial en crochant « Découper les expressions en unités élémentaires » ; cela peut-être util pour augementer le rappel.</p>
+                        <p><b style="color: darkred;">[Remarque 2]</b> il y a un certain nombre de tokens qui ne sont pas correctement étiquetés. Cela arrive souvent lors que l'étiqueteur rencontre des mots grammaticaux, par exemple le fameux « des » ; ou un nom propre qui est inconnu par le dictionnaire. Dans notre corpus, le nom de famille « Le Pen » est considéré par Cordial un adjectif, alors que « Macron », au sein d'une rubrique, possède deux étiquettes : Nom et Nam via l’étiquetage de Treetagger. </p>
+                        <p><strong>Piste damélioration possible :</strong> Nous pouvons entraîner notre propre modèle avec train-tree-tagger, par exemple.</p>                        
+                        <p><b style="color: darkred;">[Remarque 3]</b> Des ponctuations ont été étiquetées comme adj, nom, <i>etc</i>. Dans les sorties étiquetées avec T2, le guillmet français " « " ( u+00ab left-pointing double angle quotation mark ) est un adjectif, qui provoque de nombreux bruits dans notre patrons mophosyntaxique. Il est bien reconnu par Cordial ou T1 lors de l'étiquetage, nous n'avions pas pu prévoir cette divergence via le paramétrage T2.  A propos d'autres types de ponctuations, (« full-width » par exemple) , nous avons grosso modo réglé des problèmes.</p>
+                        <p><strong>Piste d'amélioration possible :</strong> bonne normalisation de texte en entrée, qui peut augmenter significativement  la performance, comme notre transformation de « ’ » (u+2019 right single quotation mark) en apostrophe. De plus, dans certains cas, il est possible d'enlever prèsque tous les ponctuations.</p>
+                    </div>
+
+                    <div class="content-box">
+                        <h2>IV. Conclusion</h2>
+                        <p>Nos remarques, même si non exhaustives, nous permettent de diagnostiquer ou éventuellement résoudre des problèmes, et nous inspirent d'autres pistes explorables, par exemple, Cordial a deux centaines d'étiquettes dans son jeu, nous pouvons en profiter et affiner notre motif. Outre les fichiers de paramètres, nous pouvons fournir un dictionnaire/lexique, <i>etc</i>. Il y a toujours une meilleure solution... </p>
+                    </div>
+                    
+                    <div class="content-box">
+                        <h2>Références</h2>
+                        <p>Allauzen, Alexandre, and Hélene Bonneau-Maynard. "Training and Evaluation of POS Taggers on the French MULTITAG Corpus." <i>LREC</i>. 2008.</p>
+                        <p>Leroy, Sarah. "Des patrons morpho-syntaxiques pour le repérage automatique de l'antonomase du nom propre." <i>Morin A. &amp; Sébillot P.(éd.), JADT 2002–6es Journées internationales d'Analyse statistique des Données Textuelles, Saint-Malo</i>.. Vol. 2. 2002.</p>
+                        <p>Schmid, Helmut. "Probabilistic part-oﬁspeech tagging using decision trees." <i>New methods in language processing</i>. 2013.</p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div id="stamp" class="container">
+            <div class="hexagon"><span class="icon icon-wrench"></span></div>
+        </div>
+        <div id="copyright" class="container">
+            <p>&copy;  JIANG Chunyang &amp; XU Yizhou. All rights reserved. | Design by <a href="http://templated.co" rel="nofollow">TEMPLATED</a>.</p>
+        </div>
+        <script src="js/prism.js"></script>
+    </body>
+</html>

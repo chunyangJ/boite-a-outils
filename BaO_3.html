@@ -1,0 +1,679 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+	Design by TEMPLATED
+	http://templated.co
+	Released for free under the Creative Commons Attribution License
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Boîte à Outils : série 3</title>
+        <meta name="keywords" content="Toolbox Perl" />
+        <meta name="description" content="Projet Encadré : Boîte à Outils" />
+        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+        <link href="css/default.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/fonts.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/prism.css" rel="stylesheet" type="text/css" media="all"/>
+        <!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+    </head>
+    <body>
+        <div id="header-wrapper">
+            <div id="header" class="container">
+                <div id="logo">
+                    <span class="icon icon-inbox"></span>
+                    <h1><a href="http://www.tal.univ-paris3.fr/cours/masterproj.htm#projet2" target="_blank">Boîte à Outils : série 3</a></h1>
+                    <span style="transformation: uppercase;">"Easy things should be easy, and hard things should be possible."</span><br /><br />
+                    <span><a href="http://www.tal.univ-paris3.fr/plurital/" target="_blank">pluriTAL</a>&#160;&#160;M1</span>
+                </div>
+                <div id="triangle-up"></div>
+            </div>
+        </div>    
+        <div id="menu-wrapper">
+            <div id="menu">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="BaO_1.html">BaO 1</a></li>
+                    <li><a href="BaO_2.html">BaO 2</a></li>
+                    <li class="current_page_item"><a href="BaO_3.html">BàO 3</a></li>
+                    <li><a href="BaO_4.html">BaO 4</a></li>
+                    <li><a href="analyse.html">Analyse</a></li>
+                    <li><a href="a_propos.html">A Propos</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- main content -->
+        <div id="wrapper">
+            <div id="featured-wrapper">
+                <div class="content">
+                    <h1>BàO 3 : Extraction de Patrons Morphosyntaxiques</h1>
+                    <div class="content-box">
+                        <h2>I. Spécification</h2>
+                        <h3>Boîte à Outils série 3</h3>
+                        <p>Extraction des patrons morphosyntaxiques dans les étiquetages produits avec <em>Cordial/Treetagger</em></p>
+                    </div>
+                    <div class="content-box">
+                        <h3>Données</h3>
+                        <ul>
+                            <li><Strong>Entrée</strong> : 
+                                <ul>
+                                    <li>les sorties au format XML de l'étiquetage (via <i>Treetagger</i>) issues de la Boîte à Outils Série 2 </li>
+                                    <li>les sorties "brutes" de l'étiquetage (via <i>Cordial</i>) issues de la Boîte à Outils Série 2 </li>
+                                </ul>
+                            </li>
+                            <li><Strong>Sortie</strong> : Des listes des patrons morphosyntaxiques triés par ordre de fréquence d'occurrence (1 fichier txt par motif et par rubrique)</li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <h2>II. Méthodes et Outils</h2>
+                        <h3>2.1 Méthodes(Script Perl)</h3>
+                        <p>Dans cette phase, nous adaptons le script fourni par M. Serge FLEURY. Voilà le script de départ :</p>
+                        <div class="code">
+                            <pre>
+                                <code class="language-Perl">
+#!/usr/bin/perl
+#----------------------------------
+# Ouverture des fichiers en lecture
+#----------------------------------
+open (FICTAG, $ARGV[0]) or die ("probleme sur ouverture de la sortie CORDIAL...");
+open (FICPOS, $ARGV[1]) or die ("probleme sur ouverture du fichier des patrons...");
+#-----------------------------------------
+# on stocke les patrons dans une liste....
+#-----------------------------------------
+my @listedespatrons=();
+while (my $lignepos = &lt;FICPOS&gt;) {
+    chomp($lignepos);
+    push(@listedespatrons,$lignepos);
+}
+close(FICPOS);
+#---------------------------
+# Initialisation des listes
+#--------------------------
+my @malignesegmentee = ();
+my @listedetokens = ();
+my @listedelemmes = ();
+my @listedepos = ();
+#-------------------------------------------
+# Lecture du fichier de tags ligne par ligne
+#-------------------------------------------
+while (my $ligne = &lt;FICTAG&gt;) {
+    #----------------------------------------------------------------------------------
+    # On ne s'occupe pas des lignes qui ne respectent pas la modèle mot tab mot tab mot
+    #----------------------------------------------------------------------------------
+    if ($ligne =~ /^[^\t]+\t[^\t]+\t[^\t]+$/) {
+	#-------------------------------------------
+	# Suppression du caractère de saut de ligne
+	chomp($ligne);
+	#-------------------------------------------
+	# Remplissage des listes
+	@malignesegmentee = split(/\t/, $ligne);
+	push(@listedetokens, $malignesegmentee[0]);
+	push(@listedelemmes, $malignesegmentee[1]);
+	push(@listedepos, $malignesegmentee[2]);
+	#-------------------------------------------
+    }
+}
+close(FICTAG);
+#-----------------------------------
+# on va maintenant parcourir les POS
+# et les TOKENS en //
+#----------------------------------------------------------------------------------------
+# 1. on cree une liste tmp des POS que l'on va parcourir en supprimant le premier element 
+#    a chaque fois
+#----------------------------------------------------------------------------------------
+my @tmplistedespos=@listedepos;
+my $indice=0;
+while (my $pos =shift(@tmplistedespos)) {
+    foreach my $patron (@listedespatrons) {
+	#-----------------------------------
+	# on segmente le patron pour connaitre
+	# son premier element
+	my @listedeterme=split(/\#/,$patron);
+	#-----------------------------------
+	# on teste si l'element courant POS correspond au premier element du patron...
+	if ($pos=~/$listedeterme[0]/) {
+	    # si c'est OK...
+	    # on regarde maintenant s'il y a correspondance pour la suite...
+	    my $verif=0;
+	    for (my $i=0;$i&lt;=$#listedeterme-1;$i++) {
+		if ($tmplistedespos[$i]=~/$listedeterme[$i+1]/) { 
+		    #Le suivant est bon aussi...
+		    $verif++ ;
+		}
+		else {
+		    # ici : $tmplistedespos[$i] differe de $listedeterme[$i+1]...
+		}
+	    }
+	    #------------------------------------------------------------------------
+	    # si verif est egal au nb d'element du patron c'est qu'on a tt reconnu... 
+	    # on imprime les tokens en // aux POS : astuce $indice permet de garder le 
+	    # le // entre POS et TOKEN....
+	    #------------------------------------------------------------------------
+	    if ($verif == $#listedeterme) { 
+		#print "Correspondance sur $patron \n";
+		for (my $i=0;$i&lt;=$#listedeterme;$i++) {
+		    print $listedetokens[$indice+$i]," ";
+		}
+		print "\n";
+	    }
+	}
+    }
+    $indice++;
+    # on avance dans la liste des POS et des TOKEN en //
+}
+                                </code>
+                            </pre>
+                        </div>
+                        <h3>2.2 Outils<h3>
+                        <h4>2.2.1 XQuery [<a href="http://basex.org/" target="_blank">BaseX</a>]</h4>
+                        <h4>2.2.1 XSLT [<a href="https://www.oxygenxml.com/" target="_blank">oXygen 16.1</a>]</h4>
+                    </div>
+                    
+                    <div class="content-box">
+                        <h2>III. Solution</h2>
+                        
+                        <h3>3.1 Script Perl</h3>
+                        <h4>Adaptation du script</h4>
+                        <ul>
+                            <li>
+                                <strong style="font-weight: 700;">Traitement des sorties au format XML de l'étiquetage (via Treetagger) issues de la Boîte à Outils Série 2.</strong><br />
+                                Nous ajoutons une option -t au script. Par défault, le programme traite les fichiers comme sorties de Cordial [BàO2]; quand cette option est activée, le script traite les fichiers comme sorties de TreeTagger [BàO2].
+                            </li>
+                            <li><strong style="font-weight: 700;">Impression des résultats séparément</strong> en utilisant la table de hashage.</li>
+                            <li>Optimisation de lecture du fichier de motifs.</li>
+                        </ul>
+                        <div class="code solution">
+                            <pre>
+                                <code class="language-Perl">
+#!/usr/bin/perl
+use warnings;
+use strict;
+use Getopt::Std;
+# use Data::Dumper;
+use open IO =&gt; ':encoding(UTF-8)';#tree-tagger
+use vars '$opt_t';
+
+my $MODIF="2018-05-16";
+my $DOC=&lt;&lt;DOCUMENTATION;
+    ____________________________________________________________________________
+
+    NOM :   Boîte à Outils 3      
+    MODIFICATION :
+            $MODIF
+    USAGE : 
+            perl Bao_3.pl [OPTION] FICHIER-A-EXTRAIRE FICHIER-DE-MOTIF
+    DESCRIPTION:
+            Le programme prend en entree le nom du fichier à traiter et le nom
+            du fichier de motifs.
+            Le programme construit en sortie pour chaque motif un fichier txt de 
+            patrons morphosyntaxiques.
+
+            -t
+                exige un fichier de motifs correspondant aux jeux 
+                d'etiquettes de tree-tagger français, et un fichier XML de
+                textes etiquetes par tree-tagger.
+
+            par default, le script demande d'un fichier de motifs correspondant
+            au Cordial, et d'un fichier de texte etiquetes par Cordial.
+    ____________________________________________________________________________
+
+DOCUMENTATION
+
+getopts('t');
+
+if (@ARGV!=2) {
+    die $DOC;
+}
+
+#------------------------------------------------------------------------------
+# Ouverture des fichiers en lecture
+# si option -t est active, le fichier d'entree sera traite comme sortie de CORDIAL(txt-iso-8859-15)
+# sinon, le fichier d'entree sera traite comme sortie de TreeTagger(XML-utf8)
+#------------------------------------------------------------------------------
+my $FHTAG;
+if(defined($opt_t))
+{
+    open ($FHTAG,"&lt;", $ARGV[0]) or die ("probleme sur ouverture de la sortie de BaO2...");
+}
+else
+{
+    open ($FHTAG,"&lt;:encoding(iso-8859-15)", $ARGV[0]) or die ("probleme sur ouverture de la sortie de BaO2...");
+}
+open (my $FHPOS,"&lt;", $ARGV[1]) or die ("probleme sur ouverture du fichier des patrons...");
+#---------------------------------------------------------------------------
+# 1. on localise (desinitialise) le variable global $/ pour permettre a l'operateur
+#    &lt;..&gt; de lire l'ensemble de texte dans une chaine de caracs
+#    typique usage de local; my est illegal pour les variables de ponctuation
+#    (comme $_ $/ $")
+# 2. on segmente la chaine (par '\n') en liste de patrons
+# astuce : la boucle (comme while(my $var = &lt;FH&gt;)) est couteux pour 
+#          la meme tache; split() est plus efficace
+#---------------------------------------------------------------------------
+my $mesPatrons = do { local $/; &lt;$FHPOS&gt; };
+# $mesPatrons=~ s/\r//g;
+my @listePatrons = split('\n', $mesPatrons);
+close($FHPOS);
+#---------------------------
+# Initialisation des listes
+#--------------------------
+my @maLigneSegmentee = ();
+my @listeTokens = ();
+my @listePOS = ();
+#------------------------------------------------------------------------------
+# Lecture du fichier de tags ligne par ligne
+# extraction des tokens et des pos, puis les stocker dans les listes
+#------------------------------------------------------------------------------
+while (my $ligne = &lt;$FHTAG&gt;) {
+    chomp($ligne);
+    if(defined($opt_t))
+    {
+        if ($ligne =~ m/&lt;element&gt;&lt;data type=\"type\"&gt;([^&lt;]+)&lt;\/data&gt;&lt;data type=\"lemma\"&gt;[^&lt;]+&lt;\/data&gt;&lt;data type=\"string\"&gt;([^&lt;]+)&lt;\/data&gt;&lt;\/element&gt;/) 
+        {
+            push(@listeTokens, $2);
+            push(@listePOS, $1);
+        }
+    }
+    else
+    {
+        @maLigneSegmentee = split("\t", $ligne);
+        if (scalar(@maLigneSegmentee)==3)
+        {
+            push(@listeTokens, $maLigneSegmentee[0]);
+            push(@listePOS, $maLigneSegmentee[2]);
+        }
+    }
+}
+close($FHTAG);
+
+#---------------------------------------------------
+# on va maintenant parcourir les POS et les TOKENS
+#----------------------------------------------------------------------------------------
+# 1. on cree une liste tmp des POS que l'on va parcourir en supprimant le premier element 
+#    a chaque fois
+# 2. on cree un dictionnaire de termes (table de hashage) pour stocker les termes trouves  
+#----------------------------------------------------------------------------------------
+my @tmpListePOS=@listePOS;
+my $indice=0;
+my %terminologie;
+while (my $pos = shift(@tmpListePOS)) {
+    foreach my $patron (@listePatrons) {
+	#-----------------------------------
+	# on segmente le patron pour connaitre
+	# son premier element
+	my @listeTerme = split('#',$patron);
+	#-----------------------------------
+	# on teste si l'element courant POS correspond au premier element du patron...
+	if ($pos=~/$listeTerme[0]/) {
+	    # si c'est OK...
+	    # on regarde maintenant s'il y a correspondance pour la suite...
+	    my $verif=0;
+	    for (my $i=0;$i&lt;=$#listeTerme-1;$i++) {
+		if ($tmpListePOS[$i]=~/$listeTerme[$i+1]/) { 
+		    #Le suivant est bon aussi...
+		    $verif++ ;
+		}
+	    }
+	    #------------------------------------------------------------------------
+	    # si verif est egal au nb d'element du patron c'est qu'on a trouve un terme
+	    # on enchaine les tokens en terme; puis ajoute le terme au dict de termes 
+	    #------------------------------------------------------------------------
+	    if ($verif == $#listeTerme) { 
+		my $termTrouve="";
+		for (my $i=0;$i&lt;=$#listeTerme;$i++) {
+		    $termTrouve.=$listeTokens[$indice+$i]." ";
+		}
+ 		$termTrouve=~ s/ $/\n/g;
+                push(@{$terminologie{$patron}},$termTrouve);
+	    }
+	}
+    }
+    $indice++;
+    # on avance dans la liste des POS et des TOKEN
+}
+#-----------------------------------
+# Impression de resultats
+#-----------------------------------
+# alt: print Dumper(\%terminologie);
+
+while ((my $patron, my $terms) = each %terminologie){
+    $patron =~ s/#/_/g;
+    open(my $FH, "&gt;", "$patron.txt");
+    print $FH "\n\n------ $patron ------\n\n";
+    foreach my $term (@$terms) { print $FH $term; }
+    close($FH);
+}                                </code>
+                            </pre>
+                            <a class="button small" href="script/BaO_3_beta.pl" download="">telecharger</a>
+                        </div>
+                        <h4>Motifs</h4>
+                        Selon le jeu d'étiquettes de chaque outil d'étiquetage, nous avons proposé pour chacun trois motifs de requêtes :<br />
+                        [NOM ADJ], [NOM, PREP NOM], et [NOM PREP DET NOM]. 
+                        <p><details><summary><strong>MOTIF_CORDIAL</strong></summary>
+                            <ul style="font-size: 80%;"><li>NC[^ ]+#ADJ[^ ]+</li><li>NC[^ ]+#PREP#NC[^ ]+</li><li>NC[^ ]+#PREP#DET[^ ]+#NC[^ ]+</li></ul>
+                            <a style="margin-left: 3em;" class="button small" href="script/MOTIF_CORDIAL" download="">telecharger</a>
+                        </details></p>
+                        <p><details><summary><strong>MOTIF_TREETAGGER</strong></summary>
+                            <ul style="font-size: 80%;"><li>NOM#ADJ</li><li>NOM#PRP[^ ]*#NOM</li><li>NOM#PRP[^ ]*#DET[^ ]*#NOM</li></ul>
+                            <a style="margin-left: 3em;" class="button small" href="script/MOTIF_TREETAGGER" download="">telecharger</a>
+                        </details></p>
+                        
+                        <h3>3.2 XQuery</h3>
+                        <h4>NOM_ADJ</h4>
+                        <div class="code solution">
+                            <pre>
+                                <code class="language-markup">
+(:BAO3_XQUERY_NomAdj.xq Sur les fichiers étiquetés avec treetagger (par rubrique a priori), Construire une requête pour extraire les patrons morpho-syntaxiques NOM ADJ:)
+(:les patrons sont écrits respectivement dans des fichiers nommés par rubrique:)
+   let $base := collection("TREE-TAGGER")/base
+   for $rubrique in distinct-values($base/@rubrique)
+   let $fName := concat("./Patrons/", $rubrique, "_XQUERY_NomAdj.xml")
+   let $params := &lt;output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization"&gt;
+   &lt;output:method value='xml'/&gt;
+  &lt;output:omit-xml-declaration value="no"/&gt;
+&lt;/output:serialization-parameters&gt;
+   return 
+     file:write($fName,
+       &lt;patrons rubrique="{$rubrique}" type="NOM_ADJ"&gt;
+       {
+         for $ele1 in $base[@rubrique=$rubrique]/etiquetage/fichier/element
+         let $ele2 := $ele1/following-sibling::element[1]
+         where $ele1/data[1]="NOM" and $ele2/data[1]="ADJ"
+         return &lt;patron&gt;{$ele1/data[3]/text()," ", $ele2/data[3]/text()}&lt;/patron&gt;
+       }
+       &lt;/patrons&gt;, $params)                                
+                                </code>
+                            </pre>
+                            <a class="button small" href="script/BAO3-XSLT-XQUERY/BaO3_XQUERY_NomAdj.xq" download="">telecharger</a>
+                        </div>
+                        <h4>NOM_PRP_NOM</h4>
+                        <div class="code solution">
+                            <pre>
+                                <code class="language-markup">
+(:BAO3_XQUERY_NomPrpNom.xq Sur les fichiers étiquetés avec treetagger (par rubrique a priori), Construire une requête pour extraire les patrons morpho-syntaxiques NOM PRP NOM:)
+(:les patrons sont écrits respectivement dans des fichiers nommés par rubrique:)
+   let $base := collection("TREE-TAGGER")/base
+   for $rubrique in distinct-values($base/@rubrique)
+   let $fName := concat("./Patrons/", $rubrique, "_XQUERY_NomPrpNom.xml")
+   let $params := &lt;output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization"&gt;
+   &lt;output:method value='xml'/&gt;
+  &lt;output:omit-xml-declaration value="no"/&gt;
+&lt;/output:serialization-parameters&gt;
+   return 
+     file:write($fName,
+       &lt;patrons rubrique="{$rubrique}" type="NOM_PRP_NOM"&gt;
+       {
+         for $ele1 in $base[@rubrique=$rubrique]/etiquetage/fichier/element
+         let $ele2 := $ele1/following-sibling::element[1]
+         let $ele3 := $ele1/following-sibling::element[2]
+         where $ele1/data[1]="NOM" and $ele2/data[1][contains(.,"PRP")] and $ele3/data[1]="NOM"
+         return &lt;patron&gt;{$ele1/data[3]/text()," ", $ele2/data[3]/text()," ", $ele3/data[3]/text()}&lt;/patron&gt;
+       }
+       &lt;/patrons&gt;, $params)                                
+                                </code>
+                            </pre>
+                            <a class="button small" href="script/BAO3-XSLT-XQUERY/BaO3_XQUERY_NomPrpNom.xq" download="">telecharger</a>
+                        </div>                                                
+                        <h4>NOM_PRP_DET_NOM</h4>
+                        <div class="code solution">
+                            <pre>
+                                <code class="language-markup">
+(:BAO3_XQUERY_NomPrpDetNom.xq Sur les fichiers étiquetés avec treetagger (par rubrique a priori), Construire une requête pour extraire les patrons morpho-syntaxiques NOM PRP DET NOM:)
+(:les patrons sont écrits respectivement dans des fichiers nommés par rubrique:)
+   let $base := collection("TREE-TAGGER")/base
+   for $rubrique in distinct-values($base/@rubrique)
+   let $fName := concat("./Patrons/", $rubrique, "_XQUERY_NomPrpDetNom.xml")
+   let $params := &lt;output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization"&gt;
+   &lt;output:method value='xml'/&gt;
+  &lt;output:omit-xml-declaration value="no"/&gt;
+&lt;/output:serialization-parameters&gt;
+   return 
+     file:write($fName,
+       &lt;patrons rubrique="{$rubrique}" type="NOM_PRP_DET_NOM"&gt;
+       {
+         for $ele1 in $base[@rubrique=$rubrique]/etiquetage/fichier/element
+         let $ele2 := $ele1/following-sibling::element[1]
+         let $ele3 := $ele1/following-sibling::element[2]
+         let $ele4 := $ele1/following-sibling::element[3]
+         where $ele1/data[1]="NOM" and $ele2/data[1][contains(.,"PRP")] and $ele3/data[1][contains(.,"DET")] and $ele4/data[1]="NOM"
+         return &lt;patron&gt;{$ele1/data[3]/text()," ", $ele2/data[3]/text()," ", $ele3/data[3]/text()," ", $ele4/data[3]/text()}&lt;/patron&gt;
+       }
+       &lt;/patrons&gt;, $params)                                
+                                </code>
+                            </pre>
+                            <a class="button small" href="script/BAO3-XSLT-XQUERY/BaO3_XQUERY_NomPrpDetNom.xq" download="">telecharger</a>
+                        </div>
+                        <h3>3.3 XSLT</h3>
+                        <div class="code solution">
+                            <pre>
+                                <code class="language-markup">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+    &lt;xsl:output method="text" encoding="utf-8"/&gt;
+    &lt;!-- Bao3 extraction de 3 patrons morpho-syntaxiques sur les fichiers --&gt;
+    &lt;!--(head -n 4 $nomFic; tail -n +5 $nomFic | sort | uniq -ic | sort -gr) &gt; $nomFicSort--&gt;
+    &lt;xsl:template match="/"&gt;
+        &lt;xsl:variable name="rubrique" select="base/@rubrique"/&gt;
+        &lt;xsl:result-document href="{concat($rubrique,'_XSLT_NomAdj.txt')}"&gt;
+            &lt;xsl:text&gt;
+                
+----------------Nom Adj-------------------
+                
+                
+&lt;/xsl:text&gt;
+            &lt;xsl:apply-templates select="base/etiquetage/fichier/element" mode="NomAdj"/&gt;
+        &lt;/xsl:result-document&gt;
+        &lt;xsl:result-document href="{concat($rubrique,'_XSLT_NomPrpNom.txt')}"&gt;
+            &lt;xsl:text&gt;
+                
+----------------Nom Prp Nom-----------------
+                                
+&lt;/xsl:text&gt;
+            &lt;xsl:apply-templates select="base/etiquetage/fichier/element" mode="NomPrpNom"/&gt;
+        &lt;/xsl:result-document&gt;
+
+        &lt;xsl:result-document href="{concat($rubrique,'_XSLT_NomPrpDetNom.txt')}"&gt;
+            &lt;xsl:text&gt;
+                
+----------------Nom Prp Det Nom----------------
+                                
+&lt;/xsl:text&gt;
+            &lt;xsl:apply-templates select="base/etiquetage/fichier/element" mode="NomPrpDetNom"/&gt;
+        &lt;/xsl:result-document&gt;
+    &lt;/xsl:template&gt;
+
+    &lt;xsl:template match="element" mode="NomAdj"&gt;
+        &lt;xsl:variable name="ele1" select="."/&gt;
+        &lt;xsl:variable name="ele2" select="following-sibling::element[1]"/&gt;
+        &lt;xsl:if test="($ele1/data[1]='NOM') and ($ele2/data[1]='ADJ')"&gt;
+            &lt;xsl:value-of select="concat($ele1/data[3],' ',$ele2/data[3])"/&gt;
+            &lt;xsl:text&gt;
+&lt;/xsl:text&gt;
+        &lt;/xsl:if&gt;
+    &lt;/xsl:template&gt;
+
+    &lt;xsl:template match="element" mode="NomPrpNom"&gt;
+        &lt;xsl:variable name="ele1" select="."/&gt;
+        &lt;xsl:variable name="ele2" select="following-sibling::element[1]"/&gt;
+        &lt;xsl:variable name="ele3" select="following-sibling::element[2]"/&gt;
+        &lt;xsl:if
+            test="($ele1/data[1]='NOM') and ($ele2/data[1][matches(.,'PRP')]) and ($ele3/data[1]='NOM')"&gt;
+            &lt;xsl:value-of select="concat($ele1/data[3],' ',$ele2/data[3],' ',$ele3/data[3])"/&gt;
+            &lt;xsl:text&gt;
+&lt;/xsl:text&gt;
+        &lt;/xsl:if&gt;
+    &lt;/xsl:template&gt;
+
+    &lt;xsl:template match="element" mode="NomPrpDetNom"&gt;
+        &lt;xsl:variable name="ele1" select="."/&gt;
+        &lt;xsl:variable name="ele2" select="following-sibling::element[1]"/&gt;
+        &lt;xsl:variable name="ele3" select="following-sibling::element[2]"/&gt;
+        &lt;xsl:variable name="ele4" select="following-sibling::element[3]"/&gt;
+        &lt;xsl:variable name="ele5" select="following-sibling::element[4]"/&gt;
+        &lt;xsl:if
+            test="($ele1/data[1]='NOM') and ($ele2/data[1][contains(.,'PRP')]) and ($ele3/data[1][contains(.,'DET')]) and ($ele4/data[1]='NOM')"&gt;
+            &lt;xsl:value-of
+                select="concat($ele1/data[3],' ',$ele2/data[3],' ',$ele3/data[3],' ',$ele4/data[3])"/&gt;
+            &lt;xsl:text&gt;
+&lt;/xsl:text&gt;
+        &lt;/xsl:if&gt;
+    &lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;
+                                </code>
+                            </pre>
+                            <a class="button small" href="script/BAO3-XSLT-XQUERY/BaO3_XSLT.xsl" download="">telecharger</a>
+                        </div>
+                        <h3>3.4 ESSAIS</h3>
+                        <p>Nous avons tenté plusieurs combinaisons de tests via les solutions <i>supra</i>. Les combinaisons varient en fonction de solutions, de fichiers de motifs, et de paramètres du Treetagger.</p>
+                        <details><summary><h4 style="display: inline;">Essai 1</h4></summary>
+                        <p><strong>Echantillon :</strong> tous les textes extraits et étiquetés dans la  BàO2 via Cordial ;<br /> 
+                        <strong>Nombre de rubriques :</strong> 14;<br />
+                        <strong>Paramètre :</strong> Solution Perl + MOTIF_CORDIAL+Fichier étiqueté via Cordial.</p></details>
+                        <details><summary><h4 style="display: inline;">Essai 2</h4></summary>
+                        <p><strong>Echantillon :</strong> tous les textes extraits et étiquetés dans la  BàO2 via TREETAGGER; <br /> 
+                        <strong>Nombre de rubriques :</strong> 14;<br />
+                        <strong>Paramètre :</strong> Solution Perl + MOTIF_TREETAGGER+Fichier étiqueté via Treetagger (french-oral-utf-8.par).</p></details>                        
+                        <details><summary><h4 style="display: inline;">Essai 3</h4></summary>
+                        <p><strong>Echantillon :</strong> tous les textes extraits et étiquetés dans la  BàO2 via TREETAGGER;  <br /> 
+                        <strong>Nombre de rubriques :</strong> 14;<br />
+                        <strong>Paramètre :</strong> Solution Perl + MOTIF_TREETAGGER+Fichier étiqueté via Treetagger (french-utf8.par).</p></details>
+                        <details><summary><h4 style="display: inline;">Essai 4</h4></summary>
+                        <p><strong>Echantillon :</strong> tous les textes extraits et étiquetés dans la  BàO2 via TREETAGGER;  <br /> 
+                        <strong>Nombre de rubriques :</strong> 14;<br />
+                        <strong>Paramètre :</strong> Solution XSLT +Fichier étiqueté via Treetagger (french-utf8.par).</p></details>
+                        <details><summary><h4 style="display: inline;">Essai 5</h4></summary>
+                        <p><strong>Echantillon :</strong> tous les textes extraits et étiquetés dans la  BàO2 via TREETAGGER;  <br /> 
+                        <strong>Nombre de rubriques :</strong> 14;<br />
+                        <strong>Paramètre :</strong> Solution XQUERY +Fichier étiqueté via Treetagger (french-utf8.par).</p></details>
+                        <p>Nous avons donc pour chaque rubrique : 3(motif) x 5(paramètre) = 15 (liste de patron)<br />
+                        Nous détaillerons notre exploration dans la rubrique <strong><a href="analyse.html">ANALYSE</strong>.</p>
+                    </div>
+                    
+                    <div class="content-box">
+                        <h2>IV. Résultats</h2>
+                        <h3>4.1 CORDIAL</h3>
+                        <h4>Exemple</h4>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-CORDIAL/823353-CORDIAL-NC_ADJ.txt.SORT" target="_blank">823353 [NC-ADJ] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-CORDIAL/823353-CORDIAL-NC_PREP_NC.txt.SORT" target="_blank">823353 [NC-PREP-NC] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-CORDIAL/823353-CORDIAL-NC_PREP_DET_NC.txt.SORT" target="_blank">823353 [NC-PREP-DET-NC] SORT</a><br />
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-CORDIAL/3208-CORDIAL-NC_ADJ.txt.SORT" target="_blank">3208 [NC-ADJ] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-CORDIAL/3208-CORDIAL-NC_PREP_NC.txt.SORT" target="_blank">3208 [NC-PREP-NC] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-CORDIAL/3208-CORDIAL-NC_PREP_DET_NC.txt.SORT" target="_blank">3208 [NC-PREP-DET-NC] SORT</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO3_sortie/3208/3208-CORDIAL.zip" download="">3208</a>
+                        <a class="button" href="resultat/BaO3_sortie/3210/3210-CORDIAL.zip" download="">3210</a>
+                        <a class="button" href="resultat/BaO3_sortie/3214/3214-CORDIAL.zip" download="">3214</a>
+                        <a class="button" href="resultat/BaO3_sortie/3224/3224-CORDIAL.zip" download="">3224</a>
+                        <a class="button" href="resultat/BaO3_sortie/3232/3232-CORDIAL.zip" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3236/3236-CORDIAL.zip" download="">3236</a>
+                        <a class="button" href="resultat/BaO3_sortie/3242/3242-CORDIAL.zip" download="">3242</a>
+                        <a class="button" href="resultat/BaO3_sortie/3244/3244-CORDIAL.zip" download="">3244</a>
+                        <a class="button" href="resultat/BaO3_sortie/3246/3246-CORDIAL.zip" download="">3246</a>
+                        <a class="button" href="resultat/BaO3_sortie/3260/3260-CORDIAL.zip" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3476/3476-CORDIAL.zip" download="">3476</a>
+                        <a class="button" href="resultat/BaO3_sortie/3546/3546-CORDIAL.zip" download="">3546</a>
+                        <a class="button" href="resultat/BaO3_sortie/651865/651865-CORDIAL.zip" download="">651865</a>
+                        <a class="button" href="resultat/BaO3_sortie/823353/823353-CORDIAL.zip" download="">823353</a><br />
+                        
+                        <h3>4.2 TREE-TAGGER</h3>
+                        <h4>Exemple</h4>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-TREETAGGER/823353-TREETAGGER-NOM_ADJ.txt.SORT" target="_blank">823353 [NOM-ADJ] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-TREETAGGER/823353-TREETAGGER-NOM_PRP_NOM.txt.SORT" target="_blank">823353 [NOM-PRP-NOM] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-TREETAGGER/823353-TREETAGGER-NOM_PRP_DET_NOM.txt.SORT" target="_blank">823353 [NOM-PRP-DET-NOM] SORT</a><br />
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-TREETAGGER/3208-TREETAGGER-NOM_ADJ.txt.SORT" target="_blank">3208 [NOM-ADJ] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-TREETAGGER/3208-TREETAGGER-NOM_PRP_NOM.txt.SORT" target="_blank">3208 [NOM-PRP-NOM] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-TREETAGGER/3208-TREETAGGER-NOM_PRP_DET_NOM.txt.SORT" target="_blank">3208 [NOM-PRP-DET-NOM] SORT</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO3_sortie/3208/3208-TREETAGGER.zip" download="">3208</a>
+                        <a class="button" href="resultat/BaO3_sortie/3210/3210-TREETAGGER.zip" download="">3210</a>
+                        <a class="button" href="resultat/BaO3_sortie/3214/3214-TREETAGGER.zip" download="">3214</a>
+                        <a class="button" href="resultat/BaO3_sortie/3224/3224-TREETAGGER.zip" download="">3224</a>
+                        <a class="button" href="resultat/BaO3_sortie/3232/3232-TREETAGGER.zip" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3236/3236-TREETAGGER.zip" download="">3236</a>
+                        <a class="button" href="resultat/BaO3_sortie/3242/3242-TREETAGGER.zip" download="">3242</a>
+                        <a class="button" href="resultat/BaO3_sortie/3244/3244-TREETAGGER.zip" download="">3244</a>
+                        <a class="button" href="resultat/BaO3_sortie/3246/3246-TREETAGGER.zip" download="">3246</a>
+                        <a class="button" href="resultat/BaO3_sortie/3260/3260-TREETAGGER.zip" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3476/3476-TREETAGGER.zip" download="">3476</a>
+                        <a class="button" href="resultat/BaO3_sortie/3546/3546-TREETAGGER.zip" download="">3546</a>
+                        <a class="button" href="resultat/BaO3_sortie/651865/651865-TREETAGGER.zip" download="">651865</a>
+                        <a class="button" href="resultat/BaO3_sortie/823353/823353-TREETAGGER.zip" download="">823353</a><br />
+                        
+                        
+                        <h3>4.3 TREE-TAGGER [fichier paramètre : ORAL]</h3>
+                        <h4>Exemple</h4>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-TT-ORAL/823353-TREETAGGER-ORAL-NOM_ADJ.txt.SORT" target="_blank">823353 [NOM-ADJ] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-TT-ORAL/823353-TREETAGGER-ORAL-NOM_PRP_NOM.txt.SORT" target="_blank">823353 [NOM-PRP-NOM] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-TT-ORAL/823353-TREETAGGER-ORAL-NOM_PRP_DET_NOM.txt.SORT" target="_blank">823353 [NOM-PRP-DET-NOM] SORT</a><br />
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-TT-ORAL/3208-TREETAGGER-ORAL-NOM_ADJ.txt.SORT" target="_blank">3208 [NOM-ADJ] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-TT-ORAL/3208-TREETAGGER-ORAL-NOM_PRP_NOM.txt.SORT" target="_blank">3208 [NOM-PRP-NOM] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-TT-ORAL/3208-TREETAGGER-ORAL-NOM_PRP_DET_NOM.txt.SORT" target="_blank">3208 [NOM-PRP-DET-NOM] SORT</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO3_sortie/3208/3208-TT-ORAL.zip" download="">3208</a>
+                        <a class="button" href="resultat/BaO3_sortie/3210/3210-TT-ORAL.zip" download="">3210</a>
+                        <a class="button" href="resultat/BaO3_sortie/3214/3214-TT-ORAL.zip" download="">3214</a>
+                        <a class="button" href="resultat/BaO3_sortie/3224/3224-TT-ORAL.zip" download="">3224</a>
+                        <a class="button" href="resultat/BaO3_sortie/3232/3232-TT-ORAL.zip" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3236/3236-TT-ORAL.zip" download="">3236</a>
+                        <a class="button" href="resultat/BaO3_sortie/3242/3242-TT-ORAL.zip" download="">3242</a>
+                        <a class="button" href="resultat/BaO3_sortie/3244/3244-TT-ORAL.zip" download="">3244</a>
+                        <a class="button" href="resultat/BaO3_sortie/3246/3246-TT-ORAL.zip" download="">3246</a>
+                        <a class="button" href="resultat/BaO3_sortie/3260/3260-TT-ORAL.zip" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3476/3476-TT-ORAL.zip" download="">3476</a>
+                        <a class="button" href="resultat/BaO3_sortie/3546/3546-TT-ORAL.zip" download="">3546</a>
+                        <a class="button" href="resultat/BaO3_sortie/651865/651865-TT-ORAL.zip" download="">651865</a>
+                        <a class="button" href="resultat/BaO3_sortie/823353/823353-TT-ORAL.zip" download="">823353</a><br />
+
+                        <h3>4.4 XQUERY</h3>
+                        <h4>Exemple</h4>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-XQUERY/823353_XQUERY_NOM_ADJ.txt.SORT" target="_blank">823353 [NOM-ADJ] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-XQUERY/823353_XQUERY_NOM_PRP_NOM.txt.SORT" target="_blank">823353 [NOM-PRP-NOM] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/823353/823353-XQUERY/823353_XQUERY_NOM_PRP_DET_NOM.txt.SORT" target="_blank">823353 [NOM-PRP-DET-NOM] SORT</a><br />
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-XQUERY/3208_XQUERY_NOM_ADJ.txt.SORT" target="_blank">3208 [NOM-ADJ] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-XQUERY/3208_XQUERY_NOM_PRP_NOM.txt.SORT" target="_blank">3208 [NOM-PRP-NOM] SORT</a>
+                        <a class="button special" href="resultat/BaO3_sortie/3208/3208-XQUERY/3208_XQUERY_NOM_PRP_DET_NOM.txt.SORT" target="_blank">3208 [NOM-PRP-DET-NOM] SORT</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO3_sortie/3208/3208-XQUERY.zip" download="">3208</a>
+                        <a class="button" href="resultat/BaO3_sortie/3210/3210-XQUERY.zip" download="">3210</a>
+                        <a class="button" href="resultat/BaO3_sortie/3214/3214-XQUERY.zip" download="">3214</a>
+                        <a class="button" href="resultat/BaO3_sortie/3224/3224-XQUERY.zip" download="">3224</a>
+                        <a class="button" href="resultat/BaO3_sortie/3232/3232-XQUERY.zip" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3236/3236-XQUERY.zip" download="">3236</a>
+                        <a class="button" href="resultat/BaO3_sortie/3242/3242-XQUERY.zip" download="">3242</a>
+                        <a class="button" href="resultat/BaO3_sortie/3244/3244-XQUERY.zip" download="">3244</a>
+                        <a class="button" href="resultat/BaO3_sortie/3246/3246-XQUERY.zip" download="">3246</a>
+                        <a class="button" href="resultat/BaO3_sortie/3260/3260-XQUERY.zip" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3476/3476-XQUERY.zip" download="">3476</a>
+                        <a class="button" href="resultat/BaO3_sortie/3546/3546-XQUERY.zip" download="">3546</a>
+                        <a class="button" href="resultat/BaO3_sortie/651865/651865-XQUERY.zip" download="">651865</a>
+                        <a class="button" href="resultat/BaO3_sortie/823353/823353-XQUERY.zip" download="">823353</a><br />
+                        <h3>4.4 XSLT</h3>
+                        <p><strong>Identique à 4.4 XQuery (et 4.2 Tree-Tagger)</strong></p>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO3_sortie/3208/3208-XSLT.zip" download="">3208</a>
+                        <a class="button" href="resultat/BaO3_sortie/3210/3210-XSLT.zip" download="">3210</a>
+                        <a class="button" href="resultat/BaO3_sortie/3214/3214-XSLT.zip" download="">3214</a>
+                        <a class="button" href="resultat/BaO3_sortie/3224/3224-XSLT.zip" download="">3224</a>
+                        <a class="button" href="resultat/BaO3_sortie/3232/3232-XSLT.zip" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3236/3236-XSLT.zip" download="">3236</a>
+                        <a class="button" href="resultat/BaO3_sortie/3242/3242-XSLT.zip" download="">3242</a>
+                        <a class="button" href="resultat/BaO3_sortie/3244/3244-XSLT.zip" download="">3244</a>
+                        <a class="button" href="resultat/BaO3_sortie/3246/3246-XSLT.zip" download="">3246</a>
+                        <a class="button" href="resultat/BaO3_sortie/3260/3260-XSLT.zip" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO3_sortie/3476/3476-XSLT.zip" download="">3476</a>
+                        <a class="button" href="resultat/BaO3_sortie/3546/3546-XSLT.zip" download="">3546</a>
+                        <a class="button" href="resultat/BaO3_sortie/651865/651865-XSLT.zip" download="">651865</a>
+                        <a class="button" href="resultat/BaO3_sortie/823353/823353-XSLT.zip" download="">823353</a><br />
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="stamp" class="container">
+            <div class="hexagon"><span class="icon icon-wrench"></span></div>
+        </div>
+        <div id="copyright" class="container">
+            <p>&copy;  JIANG Chunyang &amp; XU Yizhou. All rights reserved. | Design by <a href="http://templated.co" rel="nofollow">TEMPLATED</a>.</p>
+        </div>
+        <script src="js/prism.js"></script>
+    </body>
+</html>

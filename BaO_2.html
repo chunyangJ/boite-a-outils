@@ -1,0 +1,590 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+	Design by TEMPLATED
+	http://templated.co
+	Released for free under the Creative Commons Attribution License
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Boîte à Outils : série 2</title>
+        <meta name="keywords" content="Toolbox Perl" />
+        <meta name="description" content="Projet Encadré : Boîte à Outils" />
+        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+        <link href="css/default.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/fonts.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/prism.css" rel="stylesheet" type="text/css" media="all"/>
+        <!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+    </head>
+    <body>
+        <div id="header-wrapper">
+            <div id="header" class="container">
+                <div id="logo">
+                    <span class="icon icon-inbox"></span>
+                    <h1><a href="http://www.tal.univ-paris3.fr/cours/masterproj.htm#projet2" target="_blank">Boîte à Outils : série 2</a></h1>
+                    <span style="transformation: uppercase;">"Easy things should be easy, and hard things should be possible."</span><br /><br />
+                    <span><a href="http://www.tal.univ-paris3.fr/plurital/" target="_blank">pluriTAL</a>&#160;&#160;M1</span>
+                </div>
+                <div id="triangle-up"></div>
+            </div>
+        </div>    
+        <div id="menu-wrapper">
+            <div id="menu">
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="BaO_1.html">BaO 1</a></li>
+                    <li class="current_page_item"><a href="BaO_2.html">BaO 2</a></li>
+                    <li><a href="BaO_3.html">BàO 3</a></li>
+                    <li><a href="BaO_4.html">BaO 4</a></li>
+                    <li><a href="analyse.html">Analyse</a></li>
+                    <li><a href="a_propos.html">A Propos</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- main content -->
+        <div id="wrapper">
+            <div id="featured-wrapper">
+                <div class="content">
+                    <h1>BàO 2 : Etiquetage</h1>
+                    <div class="content-box">
+                        <h2>I. Spécification</h2>
+                        <h3>Boîte à Outils série 2</h3>
+                        <p>Etiquetage des données textuelles extraites dans l'arborescence des fils RSS du Monde.</p>
+                    </div>
+                    <div class="content-box">
+                        <h3>Données</h3>
+                        <ul>
+                            <li><Strong>Cordial Entrée</strong> : Toute l'arborescence du Fils RSS du Monde 2017 (fichiers txt)</li>
+                            <li><Strong>Cordial Sortie</strong> : Les textes bruts extraits et étiquetés via <i>Cordial</i> (1 fichier txt par rubrique). Dans chaque fichier, chaque ligne comporte le forme, le lemme et la catégorie grammaticale (séparés par tabulation) d'un token du texte</li>
+                            <li><Strong>TreeTagger Entrée</strong> : Toute l'arborescence du Fils RSS du Monde 2017 (fichiers XML)</li>
+                            <li><Strong>TreeTagger Sortie</strong> : Les textes étiquetés via Treetagger dans la BàO2 (1 fichier XML par rubrique). Les donées sont stockées au format XML</li>
+                        </ul>
+                    </div>
+                    <div class="content-box">
+                        <h2>II. Outils et Méthodes</h2>
+                        <h3>2.1 Outils d'étiquetage</h3>
+                        
+                        <h4>2.1.1 <a href="http://www.cordial.fr/Cordial_Analyseur/Presentation_Cordial_Analyseur.htm" target="_blank">Cordial (Version 6 - Universités)</a></h4>
+                        <p>Cet outil permet d'étiqueter nos contenus textuels extraits dans la  BàO1, et stocker les résultats en trois colonnes : forme, lemme et catégorie gramaticale.</p>
+                        <p>Selon le manuel, cette version dispose de deux options supplémentaires d'importance : l'étiquetage de texte et l'extraction de phrases sur occurrences et co-occurrences.</p>
+                        <p><details><summary><strong>jeu d'étiquettes</strong></summary>
+                        <strong>ADJMS</strong>        <i>Adjectif Masculin Singulier</i><br />
+                        <strong>ADJMP</strong>        <i>Adjectif Masculin Pluriel</i><br />
+                        <strong>ADJFS</strong>        <i>Adjectif Féminin Singulier</i><br />
+                        <strong>ADJFP</strong>        <i>Adjectif Féminin Pluriel</i><br />
+                        <strong>ADJMIN</strong>       <i>Adjectif Masculin Invariant en Nombre</i><br />
+                        <strong>ADJFIN</strong>        <i>Adjectif Féminin Invariant en Nombre</i><br />
+                        <strong>ADJSIG</strong>        <i>Adjectif Singulier Invariant en Genre</i><br />
+                        <strong>ADJPIG</strong>        <i>Adjectif Pluriel Invariant en Genre</i><br />
+                        <strong>ADJI</strong>        <i>Adjectif Invariant en Nombre et en Genre</i><br />
+                        <strong>DETDEM</strong>        <i>Adjectif Démonstratif</i><br />
+                        <strong>ADJNUM</strong>        <i>Adjectif Numérique Cardinal</i><br />
+                        <strong>ADJORD</strong>        <i>Adjectif Numérique Ordinal</i><br />
+                        <strong>DETDMS</strong>        <i>Article Défini Masculin Singulier</i><br />
+                        <strong>DETDFS</strong>        <i>Article Défini Féminin Singulier</i><br />
+                        <strong>DETIMS</strong>        <i>Article Indéfini Masculin Singulier</i><br />
+                        <strong>DETIFS</strong>        <i>Article Indéfini Féminin Singulier</i><br />
+                        <strong>NCMIN</strong>        <i>Nom commun Masculin Invariant en Nombre</i><br />
+                        <strong>NCFIN</strong>        <i>Nom commun Féminin Invariant en Nombre</i><br />
+                        <strong>NCSIG</strong>        <i>Nom commun Singulier Invariant en Genre</i><br />
+                        <strong>NCPIG</strong>        <i>Nom commun Pluriel Invariant en Genre</i><br />
+                        ...<br //>
+                        </details></p>
+                        
+                        <h4>2.1.2 <a href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/" target="_blank">TreeTagger</a></h4>
+                        <p>Un etiqueteur de morphosyntaxiques.<br />
+                        <strong>url : </strong><a href="http://www.cis.uni-muenchen.de/%7Eschmid/tools/TreeTagger/" target="_blank">http://www.cis.uni-muenchen.de/%7Eschmid/tools/TreeTagger/</a><br />
+                        <strong>jeu d'étiquettes : </strong><a href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/french-tagset.html" target="_blank">http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/data/french-tagset.html</a><br />
+                        <strong>fichier de paramètres</strong> pour le tree-tagger-french : <br />
+                        <a style="color:blue;" href="tree-tagger-param/french-oral-utf-8.par" download="">french-oral-utf-8.par</a><br />
+                        <a style="color:blue;" href="tree-tagger-param/french-utf8.par" download="">french-utf8.par</a><br />
+                        Nous utilisons les deux dans le but d'examiner l'influence de paramètres sur des résultats d'un même traitement.
+                        </p>
+                        
+                        <h3>2.2 Méthodes (Script Perl + TreeTagger)</h3>
+                        <p>Maintenant que l'extraction des contenus textuels et le nettoyage sont effectués, nous entrons dans la deuxième phase : étiquetage.</p>
+                        <p>BàO 2 hérite le script de BàO 1 et y intègre l'outil d'étiquetage (Treetagger). Le programme rappelle successivement le tokenizeur, tree-tagger et le script de formatage qui transforme la sortie de tree-tagger en XML.</p>
+
+                        
+                        <h2>III. Problème à résoudre</h2>
+                        <p>A cette étape, le problème principal réside en le temps d'exécution épouvantable (on dit que le traitement intégrant TreeTagger dure environ 5h). La chaîne de traitements nécessite d'importantes améliorations.</p>
+                        <blockquote>Easy things should be easy, and hard things should be possible.</blockquote>
+                        <p>Pour améliorer la performance de BàO 2, il convient d'analyse d'abord ce qui rend le programme si lourd. Après une brève analyse, nous faisons l'hypothèse que le ralentissement du programme est causé par :</p>
+                        <ol>
+                            <li>lecture et écriture de fichiers temporaires</li>
+                            <li>appel de Shell (notamment celui dans la boucle)</li>
+                        </ol>
+                        
+                        <h4>3.1 Eviter la lecture &amp; écriture de fichiers.</h4>
+                        <p>Tout d'abord, nous tentons d'éviter toutes les lectures &amp; écritures de fichiers. Dans notre projet, pour utiliser TreeTagger avec Perl script, nous lançons des processus fils comme suivant : </p>
+                        <div class="code">
+                            <pre>
+                                <code class="language-Perl">
+system("perl ./tokenise-utf8.pl chaine_tmp.txt | tree-tagger ~/treetagger/lib/french-utf8.par -lemma -token -no-unknown > chaine_tmp_tag.txt");
+system("perl treetagger2xml-utf8.pl chaine_tmp_tag.txt utf-8");
+                                </code>
+                            </pre>
+                            
+                        </div>
+                        <p>Il existe grosso modo trois méthodes pour lancer des processus dans Perl : <br />
+                            <ul>
+                                <li><code>system()</code>,</li>
+                                <li><code>exec()</code>,</li>
+                                <li>les <i>backquotes</i><code>`...`</code>.</li>
+                            </ul>
+                        </p>
+                        <p>Dans notre travail, l'emploi de <code>system()</code> necessite une série de lectures &amp; écritures de fichiers temporaires, puisque le processus fils utilise STDIN et STDOUT,  la fonction ne permet pas de récupérer la sortie dans le script qui lance le processus. Donc, pour accéder aux donées produites, il faut rediriger la sortie vers un fichier. Mais, si l'écriture sur disque n'est pas indispensable, on préférera d'autres solutions.</p>
+                        <p>Si l'on veut utiliser une commande pour disposer de sa sortie sous la forme d'une chaîne de caractères, la manière la plus simple est d'employer les <i>backquotes</i>. Ainsi, nous remplaçons la fonction <code>system()</code> par <code>`...`</code>.</p>
+                        <p>Pour éviter le deuxième appel de <code>system()</code>, nous changeons le mode d'entrée et sortie du script <code>treetagger2xml</code> en STDIN et STDOUT.</p>
+                        <p>De plus, nous remarquons que nous pouvons simplifier la chaîne de traitements en remplaçant tree-tagger par tree-tagger-french. <br />
+                        Le tokenizeur, le fichier de paramètres et les options sont configurés dans le fichier de la commande comme suivant :</p>
+                        <div class="code">
+                            <pre>
+                                <code class="language-Perl">
+#!/bin/sh
+
+# Set these paths appropriately
+
+BIN=/usr/lib/tree-tagger/bin
+CMD=/usr/lib/tree-tagger/cmd
+LIB=/usr/lib/tree-tagger/lib
+
+OPTIONS="-token -lemma -sgml -no-unknown"
+
+TOKENIZER=${CMD}/utf8-tokenize.perl
+TAGGER=${BIN}/tree-tagger
+ABBR_LIST=${LIB}/french-abbreviations-utf8
+PARFILE=${LIB}/french-oral-utf-8.par
+#PARFILE=${LIB}/french-utf-8.par
+
+$TOKENIZER -f -a $ABBR_LIST $* |
+$TAGGER $OPTIONS $PARFILE
+                                </code>
+                            </pre>
+                            <a class="button small" href="tree-tagger-param/tree-tagger-french" download="">telecharger</a>
+                        </div>
+                        
+                        <p>Le pipeline est désormais plus simple : ( <em style="color: red;">nous avons modifié l'entrée et sortie du script treetagger2xml</em> )</p>
+                        
+                        <div class="code">
+                            <pre>
+                                <code class="language-Perl">
+$$contenu=`echo "$$contenu" | tree-tagger-french | perl treetagger2xml-utf8.pl`;
+                                </code>
+                            </pre>
+                        </div>
+                        <p><strong><em style="color: purple;">Attention</em></strong>, la présence d'apostrophe (single quote) est fatale aux commandes <code>echo</code> et <code>printf</code>. Nous ne pouvons pas remplacer "’" (U+2019 RIGHT SINGLE QUOTATION MARK) par l'apostrophe avant d'appel d'<code>echo</code>. Donc, on utilise <code>sed</code> après <code>echo</code> dans la commande (au lieu de normaliser cette ponctuation dans la fonction <code>nettoyer()</code>).</p>
+                        <p>Comme uniquement un petit morceau du script <code>treetagger2xml-utf8.pl</code> est utile pour notre projet, nous avançons un pas plus loin en transplantant son coeur dans notre script.</p>
+                        <p>Maintenant, le noyau de BàO 2 est comme suivant : </p>
+                        <div class="code">
+                            <pre>
+                                <code class="language-Perl">
+sub etiqueter
+{
+    my $contenu=$_[0];
+    $$contenu=`echo "$$contenu" | sed "s/\’/\'/g" | tree-tagger-french `;
+    traitement($contenu);
+}
+
+sub traitement 
+{
+    my $texte="";
+    my $contenu=$_[0];
+    my @Lignes=split('\n',$$contenu);
+    while (my $Ligne=shift(@Lignes)) 
+    {
+	if ($Ligne!~/\ô\¯\:\\ô\¯\:\\/) 
+	{
+	    $Ligne=~s/\"/&lt;![CDATA[\"]]&gt;/g;
+	    $Ligne=~s/([^\t]*)\t([^\t]*)\t(.*)/&lt;element&gt;&lt;data type=\"type\"&gt;$2&lt;\/data&gt;&lt;data type=\"lemma\"&gt;$3&lt;\/data&gt;&lt;data type=\"string\"&gt;$1&lt;\/data&gt;&lt;\/element&gt;/;
+	    $Ligne=~s/&lt;unknown&gt;/unknown/g;
+	    $texte.=$Ligne."\n";
+	}
+    }
+    $$contenu=$texte;
+}
+                                </code>
+                            </pre>
+                        </div>
+                        <p>
+                            <strong style="color: red;">Juste un petit rappel : </strong>
+                            <ol>
+                                <li style="color: darkblue;">Le processus fils hérite STDIN et STDOUT du processus père, pour utiliser <code>echo</code> sans provoquer des erreurs d'encodage, il faut déclarer l'encodage de STDIN et de STDOUT. Nous pouvons utiliser <code>binmode()</code> ;</li>
+                                <li style="color: darkblue;">Il faut déclarer aussi l'encodage du script (<code>use utf8</code> ) au début du script pour que <code>sed</code> reconnaisse "’";</li>
+                                <li style="color: darkblue;">Si le script implique d'autres fichiers intermédiares, il convient d'ajouter la déclaration <code>use open IO => ':encoding(UTF-8)'</code>.</li>
+                                <li style="color: brown;">Au lieu de déclarer l'encodage dans le script, on peut également exécuter le script avec les options : 
+                                    <code>-C[=-CSDL]</code> ou <code>-CD[=-Cio]</code>. <br />
+                                    <details><summary>Voir le détail<br /></summary>
+                                    <a href="http://search.cpan.org/~shay/perl-5.26.2/pod/perlrun.pod#-C">http://search.cpan.org/~shay/perl-5.26.2/pod/perlrun.pod#-C</a><br />
+                                    <a href="https://perldoc.perl.org/perlunicode.html">https://perldoc.perl.org/perlunicode.html</a><br />
+                                    <a href="https://perldoc.perl.org/utf8.html">https://perldoc.perl.org/utf8.html</a></details>
+                                </li>
+                            </ol>
+                        </p>
+                        
+                        <h4>3.2 Réduire le nombre d'appels de processus fils</h4>
+                        <p>Une fois tous les fichiers temporaires sont évidés, le temps d'exécution est réduit à moins d'une heure (le temps réel varie selon la performance de machine). Mais, cela est loin d'être suffisant. En fait, l'écriture &amp; lecture de fichiers n'est pas le cause principale de pauvre performance de Perl. La majorité de temps est occupée par l'appel de shell. Au terme du temps d'exécution, l'appel de processus fils est une opération très coûteuse pour un script Perl ; la situation est encore pire quand on l'emboîte dans la boucle. Ainsi, nous proposons trois pistes pour améliorer le script.</p>
+                        <ol>
+                            <li>Eviter l'appel de shell en utilisant le module Lingua :: TreeTagger ;</li>
+                            <li>Réduire le nombre d'appel de shell</li>
+                            <li>Déplacer la fonction <code>etiqueter()</code> en dehors de la boucle ;</li>
+                        </ol>
+                        <p>Nous avons essayé les deux premières : </p>
+                        <ol>
+                            <li>Malheureusement,  Lingua :: TreeTagger n'est pas bien documenté. CPAN fournit peu d'appui pour ce module et nous n'avons pas trouvé les fichiers paramètres pour le français.</li>
+                            <li>Nous avons enchaîné les chaînes de caractères avant d'appeler la fonction <code>etiqueter()</code> ; ainsi, on lance une seule fois le processus pour chaque fichier. Enfin, le temps d'exécution de BàO 2 est réduit à <strong style="color: red;">2~3 min</strong> pour la rubrique <a href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3208-tagged.xml" download="">3208</a> de l'ensemble du corpus.</li>
+                        </ol>
+                        <p>Le script est toujours perfectible...</p>
+                    </div>
+                    
+                    <div class="content-box">
+                        <h2>IV. Solution</h2>
+                        <div class="code solution">
+                            <pre>
+                                <code class="language-Perl">
+#!/usr/bin/perl
+use utf8;
+use strict;
+use warnings;
+use XML::RSS;
+use XML::XPath;
+use open IO =&gt; ':encoding(UTF-8)'; #perl -CD/-C24/-Cio
+binmode(STDIN, ':encoding(UTF-8)');
+binmode(STDOUT, ':encoding(UTF-8)'); #perl -C3
+binmode(STDERR, ':encoding(UTF-8)'); #perl -C7 (assurer bon encodage d'impression de DOCUMENTATION)
+
+my $MODIF="2018-05-15";
+my $DOC=&lt;&lt;DOCUMENTATION;
+    ____________________________________________________________________________
+
+    NOM :   Boîte à Outils 2      
+    MODIFICATION :
+            $MODIF
+    AUTEURS :  
+            XU Yizhou, JIANG Chunyang
+    USAGE : 
+            perl Bao_2.pl REPERTOIRE-A-PARCOURIR RUBRIQUE-A-EXTRAIRE
+    DESCRIPTION:
+            Le programme prend en entrée le nom du répertoire contenant les 
+            fichiers à traiter
+            Le programme construit en sortie un fichier structuré contenant
+            sur chaque ligne les contenus textuels étiquetés            
+    ____________________________________________________________________________
+
+DOCUMENTATION
+
+if (@ARGV!=2) {
+    die $DOC;
+}
+
+my $repertoire=$ARGV[0];
+my $rubrique=$ARGV[1];
+my %redondance;
+my $cmptItem=0;
+my $fileid=0;
+
+#-----------------------------------
+#normaliser le nom du répertoire
+#-----------------------------------
+$repertoire=~ s/[\/]$//;
+
+
+open(my $FHXML,"&gt;","$rubrique-tagged.xml");
+print $FHXML "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;\n";
+print $FHXML "&lt;base rubrique=\"$rubrique\" type=\"POStagged\"&gt;\n&lt;entete&gt;\n&lt;auteur&gt;XU Yizhou&lt;/auteur&gt;\n&lt;auteur&gt;JIANG Chunyang&lt;/auteur&gt;\n&lt;/entete&gt;\n&lt;etiquetage&gt;\n";
+#------------------------------------------------------------------
+parcourirRecursion($repertoire);
+# parcourirPile($repertoire);
+#------------------------------------------------------------------
+print $FHXML "&lt;/etiquetage&gt;\n&lt;/base&gt;\n";
+close($FHXML);
+exit 0;
+#------------------------------------------------------------------
+
+
+#------------------------------------------------------------------
+sub parcourirRecursion
+{
+    my ($path)=@_;
+    opendir(my $dir, $path) or die "ERR : Echec d'ouverture de $path: $!\n";
+    my @files=readdir($dir);
+    closedir($dir);
+    
+    foreach my $file (@files)
+    {
+        next if $file =~ /^\.\.?$/;
+	$file=$path."/".$file;
+	if ( -d $file ) { parcourirRecursion($file); }
+        if ( -f $file and $file=~ m/-$rubrique.+\.xml$/ )
+        {
+            $fileid++;
+# trois moyens d'extraction
+            extraireXPath($file);
+#             extraireRSS($file);
+#             extraireRegex($file);
+        }
+    }
+}
+
+#------------------------------------------------------------------
+sub parcourirPile
+{
+    my ($path)=@_;
+    my @dirs=($path.'/');
+    
+    while(my $dir=pop(@dirs))
+    {
+        my $DH;
+        unless(opendir($DH, $dir))
+        {
+            warn "ERR : échec d'ouverture de $dir: $!\n";
+            next;
+        }
+        foreach my $file (readdir($DH))
+        {
+            next if $file =~ /^\.\.?$/;
+            $file=$dir."/".$file;
+            if ( -d $file ) { push(@dirs, $file); }
+            if ( -f $file and $file=~ m/-$rubrique.+\.xml$/ )
+            {
+                $fileid++;
+# trois moyens d'extraction
+#             extraireXPath($file);
+                extraireRSS($file);
+#             extraireRegex($file);
+            }
+        }
+        closedir($DH);
+    }
+}
+
+sub extraireRSS
+{
+    my ($file)=@_;
+    my $rss=new XML::RSS( encoding =&gt; 'utf-8' );
+    eval { $rss-&gt;parsefile($file); };
+    if ($@) {
+        warn "ERR: échec d'analyse du fichier $file : $@\n";
+    }
+    else
+    {
+        print $FHXML "&lt;fichier id=\"$fileid\" nom=\"$file\"&gt;\n";
+        my $contenu="";
+        foreach my $item (@{$rss-&gt;{'items'}})
+        {
+            my $titre=$item-&gt;{'title'};
+            my $description=$item-&gt;{'description'};
+            #---------------------------------
+            #éliminer des doublons
+            #---------------------------------
+            if(not exists $redondance{$titre})
+            {
+                $cmptItem++;
+                $redondance{$titre}=1;
+                nettoyer(\$titre);
+                if( not $titre=~ m/[?!.]$/ ) { $titre.='.'; }
+                $contenu.=$titre." ";
+                if( $description )
+                {
+                    nettoyer(\$description);
+                    $contenu.=$description." ";
+                } 
+            }            
+        }
+        etiqueter(\$contenu);
+        print $FHXML "$contenu";
+        print $FHXML "&lt;/fichier&gt;\n";
+    }
+}
+
+sub extraireXPath
+{
+    my ($file)=@_;
+    print $FHXML "&lt;fichier id=\"$fileid\" nom=\"$file\"&gt;\n";
+    
+    my $xp=XML::XPath-&gt;new( filename =&gt; $file );
+    my $contenu="";
+    foreach my $node ($xp-&gt;find('/rss/channel/item')-&gt;get_nodelist)
+    {
+        my $titre=$node-&gt;find('title')-&gt;string_value;
+        my $description=$node-&gt;find('description')-&gt;string_value;
+            if(not exists $redondance{$titre})
+            {
+                $cmptItem++;
+                $redondance{$titre}=1;
+                nettoyer(\$titre);
+                if( not $titre=~ m/[?!.]$/ ) { $titre.='.'; }
+                $contenu.=$titre." ";
+                if( $description )
+                {
+                    nettoyer(\$description);
+                    $contenu.=$description." ";
+                }
+            }
+    }
+    etiqueter(\$contenu);
+    print $FHXML "$contenu";
+    print $FHXML "&lt;/fichier&gt;\n";
+}
+
+sub extraireRegex 
+{
+    my ($file)=@_;
+    print $FHXML "&lt;fichier id=\"$fileid\" nom=\"$file\"&gt;\n";
+    
+    open (my $FH, "&lt;", $file);
+    my $texte="";
+    while (my $ligne=&lt;$FH&gt;)
+    {
+        chomp $ligne;
+        $ligne=~ s/\r//g;
+        $texte.=$ligne;
+    }
+    close($FH);
+    my $contenu="";
+    $texte=~ s/&gt;\s+&lt;/&gt;&lt;/g;
+    while ($texte=~ m/&lt;item&gt;.+?&lt;title&gt;([^&lt;]*)&lt;\/title&gt;[^&lt;]*&lt;description&gt;([^&lt;]*)&lt;\/description&gt;.+?&lt;\/item&gt;/g)
+    {
+        my $titre=$1;
+        my $description=$2;
+        if(not exists $redondance{$titre})
+        {
+            $cmptItem++;
+            $redondance{$titre}=1;
+            nettoyer(\$titre);
+            if( not $titre=~ m/[?!.]$/ ) { $titre.='.'; }
+            $contenu.=$titre." ";
+            if( $description )
+            {
+                nettoyer(\$description);
+                $contenu.=$description." ";
+            }
+        }
+    }
+    etiqueter(\$contenu);
+    print $FHXML "$contenu";
+    print $FHXML "&lt;/fichier&gt;\n";
+}
+
+sub nettoyer
+{
+    my $contenu=$_[0];
+    $$contenu =~ s/&lt;[^&gt;]+&gt;//g;
+    $$contenu =~ s/&lt;.+&gt;//g;
+    $$contenu =~ s/&(#38;)?#39;/'/g;
+    $$contenu =~ s/&(#38;)?#34;/"/g;
+    $$contenu =~ s/&(amp;)?/et/g;
+#     $$contenu =~ s/\x{2019}/\'/g;
+}
+
+sub etiqueter
+{
+    my $contenu=$_[0];
+    $$contenu=`echo "$$contenu" | sed "s/\’/\'/g" | tree-tagger-french `;
+    traitement($contenu);
+}
+
+#--------------------------------------------------------------
+#   treetagger2xml
+#   entree: référence à la chaîne de caractères contenant 
+#           le texte étiqueté et lemmatisé par tree-tagger
+#   sortie: le même texte au format xml
+#--------------------------------------------------------------
+sub traitement 
+{
+    my $texte="";
+    my $contenu=$_[0];
+    my @Lignes=split('\n',$$contenu);
+    while (my $Ligne=shift(@Lignes)) 
+    {
+	if ($Ligne!~/\ô\¯\:\\ô\¯\:\\/) 
+	{
+	    $Ligne=~s/\"/&lt;![CDATA[\"]]&gt;/g;
+	    $Ligne=~s/([^\t]*)\t([^\t]*)\t(.*)/&lt;element&gt;&lt;data type=\"type\"&gt;$2&lt;\/data&gt;&lt;data type=\"lemma\"&gt;$3&lt;\/data&gt;&lt;data type=\"string\"&gt;$1&lt;\/data&gt;&lt;\/element&gt;/;
+	    $Ligne=~s/&lt;unknown&gt;/unknown/g;
+	    $texte.=$Ligne."\n";
+	}
+    }
+    $$contenu=$texte;
+}
+
+                                </code>
+                            </pre>
+                            <a class="button small" href="script/BaO_2_beta.pl" download="">telecharger</a>
+                        </div>
+                    </div>
+                    <div class="content-box">
+                        <h2>V. Résultats</h2>
+                        <h3>5.1 CORDIAL</h3>
+                        <h4>Exemple</h4>
+                        <a class="button special" href="resultat/BaO2_sortie/CORDIAL/823353-raw.txt.iso.cnr" target="_blank">823353</a>
+                        <a class="button special" href="resultat/BaO2_sortie/CORDIAL/3208-raw.txt.iso.cnr" target="_blank">3208</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3208-raw.txt.iso.cnr" download="">3208</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3210-raw.txt.iso.cnr" download="">3210</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3214-raw.txt.iso.cnr" download="">3214</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3224-raw.txt.iso.cnr" download="">3224</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3232-raw.txt.iso.cnr" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3236-raw.txt.iso.cnr" download="">3236</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3242-raw.txt.iso.cnr" download="">3242</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3244-raw.txt.iso.cnr" download="">3244</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3246-raw.txt.iso.cnr" download="">3246</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3260-raw.txt.iso.cnr" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3476-raw.txt.iso.cnr" download="">3476</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/3546-raw.txt.iso.cnr" download="">3546</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/651865-raw.txt.iso.cnr" download="">651865</a>
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/823353-raw.txt.iso.cnr" download="">823353</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/CORDIAL/CORDIAL.zip" download="" style="width: 33em;">TOUT</a>
+                        <h3>5.2 TREE-TAGGER[<a href="tree-tagger-param/french-oral-utf-8.par" download="">french-oral-utf-8.par</a>]</h3>
+                        <h4>Exemple <span style="color: red; font-size: 60%; font-style: italic;">Réfléchissez avant de cliquer le bouton ...</span></h4>
+                        <a class="button special" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/823353-tagged.xml" target="_blank">823353</a>
+                        <a class="button special" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3208-tagged.xml" target="_blank">3208</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3208-tagged.xml" download="">3208</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3210-tagged.xml" download="">3210</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3214-tagged.xml" download="">3214</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3224-tagged.xml" download="">3224</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3232-tagged.xml" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3236-tagged.xml" download="">3236</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3242-tagged.xml" download="">3242</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3244-tagged.xml" download="">3244</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3246-tagged.xml" download="">3246</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3260-tagged.xml" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3476-tagged.xml" download="">3476</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/3546-tagged.xml" download="">3546</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/651865-tagged.xml" download="">651865</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/823353-tagged.xml" download="">823353</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER-par-oral/TREE-TAGGER-par-oral.zip" download="" style="width: 33em;">TOUT</a>
+                        <h3>5.3 TREE-TAGGER[<a href="tree-tagger-param/french-utf8.par" download="">french-utf8.par</a>]</h3>
+                        <h4>Exemple <span style="color: red; font-size: 60%; font-style: italic;">Réfléchissez avant de cliquer le bouton ...</span></h4>
+                        <a class="button special" href="resultat/BaO2_sortie/TREE-TAGGER/823353-tagged.xml" target="_blank">823353</a>
+                        <a class="button special" href="resultat/BaO2_sortie/TREE-TAGGER/3208-tagged.xml" target="_blank">3208</a>
+                        <h4>Téléchargement</h4>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3208-tagged.xml" download="">3208</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3210-tagged.xml" download="">3210</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3214-tagged.xml" download="">3214</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3224-tagged.xml" download="">3224</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3232-tagged.xml" download="">3232</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3236-tagged.xml" download="">3236</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3242-tagged.xml" download="">3242</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3244-tagged.xml" download="">3244</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3246-tagged.xml" download="">3246</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3260-tagged.xml" download="">3260</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3476-tagged.xml" download="">3476</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/3546-tagged.xml" download="">3546</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/651865-tagged.xml" download="">651865</a>
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/823353-tagged.xml" download="">823353</a><br />
+                        <a class="button" href="resultat/BaO2_sortie/TREE-TAGGER/TREE-TAGGER.zip" download="" style="width: 33em;">TOUT</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="stamp" class="container">
+            <div class="hexagon"><span class="icon icon-wrench"></span></div>
+        </div>
+        <div id="copyright" class="container">
+            <p>&copy;  JIANG Chunyang &amp; XU Yizhou. All rights reserved. | Design by <a href="http://templated.co" rel="nofollow">TEMPLATED</a>.</p>
+        </div>
+        <script src="js/prism.js"></script>
+    </body>
+</html>
