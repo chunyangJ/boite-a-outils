@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Set these paths appropriately
+
+BIN=/usr/lib/tree-tagger/bin
+CMD=/usr/lib/tree-tagger/cmd
+LIB=/usr/lib/tree-tagger/lib
+
+OPTIONS="-token -lemma -sgml -no-unknown"
+
+TOKENIZER=${CMD}/utf8-tokenize.perl
+TAGGER=${BIN}/tree-tagger
+ABBR_LIST=${LIB}/french-abbreviations-utf8
+PARFILE=${LIB}/french-oral-utf-8.par
+
+$TOKENIZER -f -a $ABBR_LIST $* |
+$TAGGER $OPTIONS $PARFILE
