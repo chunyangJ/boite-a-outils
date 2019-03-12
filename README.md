@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Projet Encadré II : Boite à Outils
 
 [Site du projet](https://xu-yizhou.github.io/boite-a-outils/)
@@ -14,4 +13,3 @@ Comme nous ne sommes pas le propriétaire du jeu de données (Le Monde RSS 2017)
 
 Le jeu de données est
 > Réservé à un usage strictement personnel, privé et non collectif (toute autre exploitation est soumis à redevance : le service commercial du Monde Interactif : Najat ESSARDY : essardy@lemonde.fr)
->>>>>>> 0d6ae0e426c6b78b9472201f71dcdcc0d3d18a32
